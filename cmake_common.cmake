@@ -375,7 +375,9 @@ while(NOT dashboard_done)
     if(COMMAND dashboard_hook_test)
       dashboard_hook_test()
     endif()
-    ctest_test(${CTEST_TEST_ARGS})
+    if(NOT dashboard_no_test)
+      ctest_test(${CTEST_TEST_ARGS})
+    endif()
     set(safe_message_skip 1) # Block furhter messages
 
     if(dashboard_do_coverage)
