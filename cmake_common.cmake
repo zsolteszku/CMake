@@ -364,7 +364,7 @@ while(NOT dashboard_done)
   set(CTEST_CHECKOUT_COMMAND) # checkout on first iteration only
   safe_message("Found ${count} changed files")
   if(dashboard_fresh OR NOT dashboard_continuous OR count GREATER 0)
-    ctest_configure()
+    ctest_configure(${dashboard_configure_args})
     ctest_read_custom_files(${CTEST_BINARY_DIRECTORY})
 
     if(COMMAND dashboard_hook_build)
