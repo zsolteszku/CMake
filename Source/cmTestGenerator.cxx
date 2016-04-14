@@ -83,6 +83,8 @@ void cmTestGenerator::GenerateScriptForConfig(std::ostream& os,
   // Get the test command line to be executed.
   std::vector<std::string> const& command = this->Test->GetCommand();
 
+  const char * emulator = 0;
+
   // Check whether the command executable is a target whose name is to
   // be translated.
   std::string exe = command[0];
@@ -93,30 +95,45 @@ void cmTestGenerator::GenerateScriptForConfig(std::ostream& os,
     // Use the target file on disk.
     exe = target->GetFullPath(config);
 
-    // Prepend with the emulator when cross compiling if required.
-    const char * emulator =
-      target->GetProperty("CROSSCOMPILING_EMULATOR");
-    if (emulator != 0)
-      {
-      std::vector<std::string> emulatorWithArgs;
-      cmSystemTools::ExpandListArgument(emulator, emulatorWithArgs);
-      std::string emulatorExe(emulatorWithArgs[0]);
-      cmSystemTools::ConvertToUnixSlashes(emulatorExe);
-      os << cmOutputConverter::EscapeForCMake(emulatorExe) << " ";
-      for(std::vector<std::string>::const_iterator ei =
-          emulatorWithArgs.begin()+1;
-          ei != emulatorWithArgs.end();
-          ++ei)
-        {
-        os << cmOutputConverter::EscapeForCMake(*ei) << " ";
-        }
-      }
+    // Lookup emulator
+    emulator = target->GetProperty("CROSSCOMPILING_EMULATOR");
     }
   else
     {
     // Use the command name given.
-    exe = ge.Parse(exe.c_str())->Evaluate(this->LG, config);
+    cmsys::auto_ptr<cmCompiledGeneratorExpression> cge = ge.Parse(exe.c_str());
+    exe = cge->Evaluate(this->LG, config);
     cmSystemTools::ConvertToUnixSlashes(exe);
+
+    // Lookup emulator
+    for(std::set<cmGeneratorTarget*>::const_iterator ci =
+        cge->GetTargets().begin();
+        ci != cge->GetTargets().end(); ++ci)
+      {
+      target = (*ci);
+      emulator = target->GetProperty("CROSSCOMPILING_EMULATOR");
+      if (emulator != 0)
+        {
+        break;
+        }
+      }
+    }
+
+  // Prepend with the emulator when cross compiling if required.
+  if (emulator != 0)
+    {
+    std::vector<std::string> emulatorWithArgs;
+    cmSystemTools::ExpandListArgument(emulator, emulatorWithArgs);
+    std::string emulatorExe(emulatorWithArgs[0]);
+    cmSystemTools::ConvertToUnixSlashes(emulatorExe);
+    os << cmOutputConverter::EscapeForCMake(emulatorExe) << " ";
+    for(std::vector<std::string>::const_iterator ei =
+        emulatorWithArgs.begin()+1;
+        ei != emulatorWithArgs.end();
+        ++ei)
+      {
+      os << cmOutputConverter::EscapeForCMake(*ei) << " ";
+      }
     }
 
   // Generate the command line with full escapes.
