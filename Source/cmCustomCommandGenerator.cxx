@@ -39,6 +39,39 @@ unsigned int cmCustomCommandGenerator::GetNumberOfCommands() const
 }
 
 //----------------------------------------------------------------------------
+const char* LookupCrossCompilingEmulator(
+    cmsys::auto_ptr<cmCompiledGeneratorExpression> cge)
+{
+  for(std::set<cmGeneratorTarget*>::const_iterator ci =
+      cge->GetTargets().begin();
+      ci != cge->GetTargets().end(); ++ci)
+    {
+    cmGeneratorTarget* target = (*ci);
+    const char* emulator = target->GetProperty("CROSSCOMPILING_EMULATOR");
+    if (emulator != 0)
+      {
+      return emulator;
+      }
+    }
+  return 0;
+}
+
+//----------------------------------------------------------------------------
+bool cmCustomCommandGenerator::UseCrossCompilingEmulator(unsigned int c) const
+{
+  std::string const& argv0 = this->CC.GetCommandLines()[c][0];
+  cmGeneratorTarget* target =
+      this->LG->FindGeneratorTargetToUse(argv0);
+  if(target && target->GetType() == cmState::EXECUTABLE)
+    {
+    return target->GetProperty("CROSSCOMPILING_EMULATOR") != 0;
+    }
+  cmsys::auto_ptr<cmCompiledGeneratorExpression> cge = this->GE->Parse(argv0);
+  cge->Evaluate(this->LG, this->Config);
+  return LookupCrossCompilingEmulator(cge) != 0;
+}
+
+//----------------------------------------------------------------------------
 std::string cmCustomCommandGenerator::GetCommand(unsigned int c) const
 {
   std::string const& argv0 = this->CC.GetCommandLines()[c][0];
@@ -50,7 +83,25 @@ std::string cmCustomCommandGenerator::GetCommand(unsigned int c) const
     {
     return target->GetLocation(this->Config);
     }
-  return this->GE->Parse(argv0)->Evaluate(this->LG, this->Config);
+  if (target && target->GetType() == cmState::EXECUTABLE)
+    {
+    const char* emulator = target->GetProperty("CROSSCOMPILING_EMULATOR");
+    if (emulator)
+      {
+      return  std::string(emulator);
+      }
+    }
+
+  cmsys::auto_ptr<cmCompiledGeneratorExpression> cge = this->GE->Parse(argv0);
+  std::string exe = cge->Evaluate(this->LG, this->Config);
+
+  const char* emulator = LookupCrossCompilingEmulator(cge);
+  if (emulator)
+    {
+    return std::string(emulator);
+    }
+
+  return exe;
 }
 
 //----------------------------------------------------------------------------
@@ -87,8 +138,13 @@ void
 cmCustomCommandGenerator
 ::AppendArguments(unsigned int c, std::string& cmd) const
 {
+  unsigned int offset = 1;
+  if (this->UseCrossCompilingEmulator(c))
+    {
+    offset = 0;
+    }
   cmCustomCommandLine const& commandLine = this->CC.GetCommandLines()[c];
-  for(unsigned int j=1;j < commandLine.size(); ++j)
+  for(unsigned int j=offset;j < commandLine.size(); ++j)
     {
     std::string arg =
         this->GE->Parse(commandLine[j])->Evaluate(this->LG,
