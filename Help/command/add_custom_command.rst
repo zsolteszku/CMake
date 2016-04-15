@@ -78,7 +78,9 @@ The options are:
 
   If ``COMMAND`` specifies an executable target (created by the
   :command:`add_executable` command) it will automatically be replaced
-  by the location of the executable created at build time.
+  by the location of the executable created at build time. If set, the
+  :variable:`CMAKE_CROSSCOMPILING_EMULATOR` variable will also be prepended
+  to the command to allow the executable to run on the host.
   (Use the ``TARGET_FILE``
   :manual:`generator expression <cmake-generator-expressions(7)>` to
   reference an executable later in the command line.)
