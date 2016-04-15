@@ -10,12 +10,13 @@
 
 int main(int argc, char * argv[] )
 {
+  const char* substring = "generated_exe";
+  const char* string = 0;
   if (argc < 2)
     {
     return EXIT_FAILURE;
     }
-  const char* substring = "generated_exe";
-  const char* string = argv[1];
+  string = argv[1];
   if (strstr(string, substring) != 0)
     {
     return EXIT_SUCCESS;
