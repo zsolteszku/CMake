@@ -36,7 +36,7 @@
 #      PREFIX ClimbingStats
 #      OUTPUT_FILES_VAR support_files
 #      OUTPUT_DIR compilers
-#      COMPILERS GNU Clang MSVC Intel
+#      COMPILERS GNU Clang MSVC
 #      FEATURES cxx_variadic_templates
 #    )
 #    install(FILES
@@ -100,7 +100,7 @@
 #    write_compiler_detection_header(
 #      FILE climbingstats_compiler_detection.h
 #      PREFIX ClimbingStats
-#      COMPILERS GNU Clang AppleClang MSVC Intel
+#      COMPILERS GNU Clang AppleClang MSVC
 #      FEATURES cxx_variadic_templates
 #    )
 #
@@ -323,7 +323,6 @@ function(write_compiler_detection_header
     AppleClang
     MSVC
     SunPro
-    Intel
   )
 
   set(_hex_compilers ADSP Borland Embarcadero SunPro)

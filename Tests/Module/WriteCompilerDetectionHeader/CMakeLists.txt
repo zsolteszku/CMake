@@ -11,7 +11,7 @@ get_property(c_known_features GLOBAL PROPERTY CMAKE_C_KNOWN_FEATURES)
 write_compiler_detection_header(
   FILE "${CMAKE_CURRENT_BINARY_DIR}/test_compiler_detection.h"
   PREFIX TEST
-  COMPILERS GNU Clang AppleClang MSVC SunPro Intel
+  COMPILERS GNU Clang AppleClang MSVC SunPro
   VERSION 3.1
   PROLOG "// something"
   EPILOG "// more"
@@ -78,13 +78,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   endif()
 endif()
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-  list(APPEND false_defs EXPECTED_COMPILER_CXX_DELEGATING_CONSTRUCTORS)
-  list(APPEND false_defs EXPECTED_COMPILER_CXX_VARIADIC_TEMPLATES)
-  set(true_defs "")
-endif()
-
-
 if (CMAKE_C_COMPILER_ID STREQUAL "GNU"
     OR CMAKE_C_COMPILER_ID STREQUAL "Clang"
     OR CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
@@ -111,7 +104,7 @@ write_compiler_detection_header(
   PREFIX MULTI
   OUTPUT_FILES_VAR multi_files
   OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/compiler_multi_files/compiler_support"
-  COMPILERS GNU Clang AppleClang MSVC SunPro Intel
+  COMPILERS GNU Clang AppleClang MSVC SunPro
   VERSION 3.1
   FEATURES
     ${cxx_known_features} ${c_known_features}
