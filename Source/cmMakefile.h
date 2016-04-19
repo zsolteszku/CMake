@@ -254,6 +254,11 @@ public:
                           const char* doc,
                           cmState::CacheEntryType type,
                           bool force = false);
+  ///! Add a definition to this makefile and the global cmake cache.
+  void AddCacheDefinition(const std::string& name, const std::string& value,
+                          const char* doc,
+                          cmState::CacheEntryType type,
+                          bool force = false);
 
   /**
    * Add bool variable definition to the build.
@@ -950,6 +955,12 @@ private:
                                const std::string& feature) const;
 
   void CheckForUnusedVariables() const;
+
+  void AddCacheDefinitionHelper(const std::string& name,
+                                    const std::string &value,
+                                    const char* doc,
+                                    cmState::CacheEntryType type,
+                                    bool force, bool haveVal);
 
   // Unused variable flags
   bool WarnUnused;
