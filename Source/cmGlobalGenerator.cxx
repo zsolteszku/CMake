@@ -336,7 +336,7 @@ void cmGlobalGenerator::FindMakeProgram(cmMakefile* mf)
     makeProgram = dir;
     makeProgram += "/";
     makeProgram += saveFile;
-    mf->AddCacheDefinition("CMAKE_MAKE_PROGRAM", makeProgram.c_str(),
+    mf->AddCacheDefinition("CMAKE_MAKE_PROGRAM", makeProgram,
                            "make program",
                            cmState::FILEPATH);
     }

@@ -120,14 +120,14 @@ bool cmFindProgramCommand
     {
     // Save the value in the cache
     this->Makefile->AddCacheDefinition(this->VariableName,
-                                       result.c_str(),
+                                       result,
                                        this->VariableDocumentation.c_str(),
                                        cmState::FILEPATH);
 
     return true;
     }
   this->Makefile->AddCacheDefinition(this->VariableName,
-                                 (this->VariableName + "-NOTFOUND").c_str(),
+                                 this->VariableName + "-NOTFOUND",
                                  this->VariableDocumentation.c_str(),
                                  cmState::FILEPATH);
   return true;

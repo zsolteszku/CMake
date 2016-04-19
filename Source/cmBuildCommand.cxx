@@ -143,7 +143,7 @@ bool cmBuildCommand
     return true;
     }
   this->Makefile->AddCacheDefinition(define,
-                                 makecommand.c_str(),
+                                 makecommand,
                                  "Command used to build entire project "
                                  "from the command line.",
                                  cmState::STRING);
