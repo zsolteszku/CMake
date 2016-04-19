@@ -1818,14 +1818,13 @@ void cmMakefile::AddDefinition(const std::string& name, const char* value)
 #endif
 }
 
-
-void cmMakefile::AddCacheDefinition(const std::string& name, const char* value,
+void cmMakefile::AddCacheDefinitionHelper(const std::string& name,
+                                    const std::string &value,
                                     const char* doc,
                                     cmState::CacheEntryType type,
-                                    bool force)
+                                    bool force, bool haveVal)
 {
-  bool haveVal = value ? true : false;
-  std::string val = haveVal ? value : "";
+  std::string val = value;
   const char* existingValue =
     this->GetState()->GetInitializedCacheValue(name);
   if(existingValue
@@ -1870,6 +1869,24 @@ void cmMakefile::AddCacheDefinition(const std::string& name, const char* value,
   this->StateSnapshot.RemoveDefinition(name);
 }
 
+void cmMakefile::AddCacheDefinition(const std::string& name, const char* value,
+                                    const char* doc,
+                                    cmState::CacheEntryType type,
+                                    bool force)
+{
+  bool haveVal = value ? true : false;
+  std::string val = haveVal ? value : "";
+  AddCacheDefinitionHelper(name, val, doc, type, force, haveVal);
+}
+
+void cmMakefile::AddCacheDefinition(const std::string& name,
+                                    const std::string& value,
+                                    const char* doc,
+                                    cmState::CacheEntryType type,
+                                    bool force)
+{
+  AddCacheDefinitionHelper(name, value, doc, type, force, true);
+}
 
 void cmMakefile::AddDefinition(const std::string& name, bool value)
 {
