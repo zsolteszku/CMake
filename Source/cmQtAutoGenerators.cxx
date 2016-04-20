@@ -1572,7 +1572,9 @@ bool cmQtAutoGenerators::NameCollisionTest(
               collisions.insert(VType(ait->second, ait->first));
               }
             collisions.insert(VType(bit->second, bit->first));
-            bit = localGen.erase ( bit );
+            Iter old = bit;
+            ++bit;
+            localGen.erase(old);
           }
         else
           {
