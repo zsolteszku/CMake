@@ -58,7 +58,7 @@ bool cmProjectCommand
     this->Makefile->AddDefinition("CMAKE_PROJECT_NAME", args[0].c_str());
     this->Makefile->AddCacheDefinition
       ("CMAKE_PROJECT_NAME",
-       args[0],
+       args[0].c_str(),
        "Value Computed by CMake", cmState::STATIC);
     }
 

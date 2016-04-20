@@ -155,7 +155,7 @@ bool cmSetCommand
   if(cache)
     {
     this->Makefile->AddCacheDefinition(variable,
-                                   value,
+                                   value.c_str(),
                                    docstring,
                                    type, force);
     }

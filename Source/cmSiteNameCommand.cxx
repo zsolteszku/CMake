@@ -86,7 +86,7 @@ bool cmSiteNameCommand
 #endif
   this->Makefile->
     AddCacheDefinition(args[0],
-                       siteName,
+                       siteName.c_str(),
                        "Name of the computer/site where compile is being run",
                        cmState::STRING);
 

@@ -128,12 +128,14 @@ bool cmGetFilenameComponentCommand
     if(!programArgs.empty() && !storeArgs.empty())
       {
       this->Makefile->AddCacheDefinition
-        (storeArgs, programArgs, "",
-         args[2] == "PATH" ? cmState::FILEPATH : cmState::STRING);
+        (storeArgs, programArgs.c_str(),
+         "", args[2] == "PATH" ? cmState::FILEPATH
+         : cmState::STRING);
       }
     this->Makefile->AddCacheDefinition
-      (args[0], result, "",
-       args[2] == "PATH" ? cmState::FILEPATH : cmState::STRING);
+      (args[0], result.c_str(), "",
+       args[2] == "PATH" ? cmState::FILEPATH
+       : cmState::STRING);
     }
   else
     {
