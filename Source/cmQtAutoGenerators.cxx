@@ -1554,32 +1554,27 @@ bool cmQtAutoGenerators::NameCollisionTest(
                           const std::map<std::string, std::string >& genFiles,
                           std::multimap<std::string, std::string>& collisions)
 {
-  typedef std::map<std::string, std::string>::iterator Iter;
+  typedef std::map<std::string, std::string>::const_iterator Iter;
   typedef std::map<std::string, std::string>::value_type VType;
-  // Create local copy
-  std::map<std::string, std::string > localGen ( genFiles );
-  for(Iter ait = localGen.begin(); ait != localGen.end(); ++ait )
+  for(Iter ait = genFiles.begin(); ait != genFiles.end(); ++ait )
     {
-    bool skip_aname ( false );
-    Iter bit = (++Iter(ait));
-    while ( bit != localGen.end() )
+    bool first_match ( true );
+    for (Iter bit = (++Iter(ait)); bit != genFiles.end(); ++bit)
       {
-        if(ait->second == bit->second)
+      if(ait->second == bit->second)
+        {
+        if (first_match)
           {
-            if ( !skip_aname )
-              {
-              skip_aname = true;
-              collisions.insert(VType(ait->second, ait->first));
-              }
-            collisions.insert(VType(bit->second, bit->first));
-            Iter old = bit;
-            ++bit;
-            localGen.erase(old);
+          if (collisions.find(ait->second) != collisions.end())
+            {
+            // We already know of this collision from before
+            break;
+            }
+          collisions.insert(VType(ait->second, ait->first));
+          first_match = false;
           }
-        else
-          {
-            ++bit;
-          }
+        collisions.insert(VType(bit->second, bit->first));
+        }
       }
     }
 
