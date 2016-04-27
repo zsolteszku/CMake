@@ -62,8 +62,9 @@ Create custom targets to build projects in external trees
   ``GIT_SUBMODULES <module>...``
     Git submodules that shall be updated, all if empty
   ``GIT_SHALLOW 1``
-    Tell Git to clone with ``--depth 1`` to download only the most
-    recent commit of the repository and its submodules.
+    Tell Git to clone with ``--depth 1``.   Use when ``GIT_TAG`` is not
+    specified or when it names a branch in order to download only the
+    tip of the branch without the rest of its history.
   ``HG_REPOSITORY <url>``
     URL of mercurial repo
   ``HG_TAG <tag>``
