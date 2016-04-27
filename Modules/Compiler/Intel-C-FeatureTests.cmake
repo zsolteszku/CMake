@@ -10,7 +10,8 @@ endif()
 
 set(DETECT_C99 "defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L")
 
-set(_cmake_feature_test_c_static_assert "__INTEL_COMPILER >= 1500 && ${DETECT_C99}")
+#static assert is only around in version 1500 update 2 and above
+set(_cmake_feature_test_c_static_assert "(__INTEL_COMPILER > 1500 || (__INTEL_COMPILER == 1500 && __INTEL_COMPILER_UPDATE > 1) ) && ${DETECT_C99}")
 
 set(_cmake_oldestSupported "__INTEL_COMPILER >= 1110")
 set(Intel_C99 "${_cmake_oldestSupported} && ${DETECT_C99}")
