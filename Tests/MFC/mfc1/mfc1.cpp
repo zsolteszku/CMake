@@ -1,9 +1,10 @@
 // mfc1.cpp : Defines the class behaviors for the application.
 //
 
+#include "stdafx.h"
+
 #include "mfc1.h"
 #include "MainFrm.h"
-#include "stdafx.h"
 
 #include "ChildFrm.h"
 #include "mfc1Doc.h"
