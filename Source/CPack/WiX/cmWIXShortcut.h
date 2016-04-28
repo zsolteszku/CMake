@@ -13,9 +13,9 @@
 #ifndef cmWIXShortcut_h
 #define cmWIXShortcut_h
 
-#include <string>
 #include <map>
 #include <set>
+#include <string>
 #include <vector>
 
 #include <cmInstalledFile.h>

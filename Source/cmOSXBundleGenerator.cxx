@@ -10,9 +10,9 @@
   See the License for more information.
 ============================================================================*/
 #include "cmOSXBundleGenerator.h"
+#include "cmLocalGenerator.h"
 #include "cmMakefile.h"
 #include "cmTarget.h"
-#include "cmLocalGenerator.h"
 
 #include <cassert>
 

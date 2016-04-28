@@ -1,7 +1,7 @@
 // ChildFrm.cpp : implementation of the CChildFrame class
 //
-#include "stdafx.h"
 #include "mfc1.h"
+#include "stdafx.h"
 
 #include "ChildFrm.h"
 

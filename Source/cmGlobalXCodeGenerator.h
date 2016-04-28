@@ -12,9 +12,9 @@
 #ifndef cmGlobalXCodeGenerator_h
 #define cmGlobalXCodeGenerator_h
 
+#include "cmCustomCommand.h"
 #include "cmGlobalGenerator.h"
 #include "cmXCodeObject.h"
-#include "cmCustomCommand.h"
 class cmGlobalGeneratorFactory;
 class cmSourceFile;
 class cmSourceGroup;

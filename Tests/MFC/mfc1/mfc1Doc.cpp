@@ -1,8 +1,8 @@
 // mfc1Doc.cpp : implementation of the Cmfc1Doc class
 //
 
-#include "stdafx.h"
 #include "mfc1.h"
+#include "stdafx.h"
 
 #include "mfc1Doc.h"
 

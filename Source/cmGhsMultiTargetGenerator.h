@@ -13,8 +13,8 @@
 #define cmGhsMultiTargetGenerator_h
 
 #include "cmStandardIncludes.h"
-#include "cmTarget.h"
 #include "cmGhsMultiGpj.h"
+#include "cmTarget.h"
 
 class cmGeneratedFileStream;
 class cmGlobalGhsMultiGenerator;

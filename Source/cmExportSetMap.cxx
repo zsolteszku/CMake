@@ -11,8 +11,8 @@
 ============================================================================*/
 
 #include "cmExportSetMap.h"
-#include "cmExportSet.h"
 #include "cmAlgorithms.h"
+#include "cmExportSet.h"
 
 cmExportSet* cmExportSetMap::operator[](const std::string &name)
 {

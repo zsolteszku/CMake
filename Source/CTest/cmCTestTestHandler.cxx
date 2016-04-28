@@ -9,29 +9,29 @@
   implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the License for more information.
 ============================================================================*/
-
 #include "cmCTestTestHandler.h"
-#include "cmCTestMultiProcessHandler.h"
-#include "cmCTestBatchTestHandler.h"
+
 #include "cmCTest.h"
+#include "cmCTestBatchTestHandler.h"
+#include "cmCTestMultiProcessHandler.h"
 #include "cmCTestRunTest.h"
-#include "cmake.h"
-#include "cmGeneratedFileStream.h"
-#include <cmsys/Process.h>
-#include <cmsys/RegularExpression.hxx>
-#include <cmsys/Base64.h>
-#include <cmsys/Directory.hxx>
-#include <cmsys/FStream.hxx>
-#include "cmMakefile.h"
-#include "cmGlobalGenerator.h"
 #include "cmCommand.h"
+#include "cmGeneratedFileStream.h"
+#include "cmGlobalGenerator.h"
+#include "cmMakefile.h"
 #include "cmSystemTools.h"
 #include "cmXMLWriter.h"
 #include "cm_utf8.h"
+#include "cmake.h"
+#include <cmsys/Base64.h>
+#include <cmsys/Directory.hxx>
+#include <cmsys/FStream.hxx>
+#include <cmsys/Process.h>
+#include <cmsys/RegularExpression.hxx>
 
-#include <stdlib.h>
-#include <math.h>
 #include <float.h>
+#include <math.h>
+#include <stdlib.h>
 
 #include <set>
 

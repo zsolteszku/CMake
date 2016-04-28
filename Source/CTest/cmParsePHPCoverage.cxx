@@ -1,6 +1,7 @@
+#include "cmParsePHPCoverage.h"
+
 #include "cmStandardIncludes.h"
 #include "cmSystemTools.h"
-#include "cmParsePHPCoverage.h"
 #include <cmsys/Directory.hxx>
 #include <cmsys/FStream.hxx>
 

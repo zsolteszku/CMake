@@ -13,9 +13,9 @@
 #ifndef cmWIXSourceWriter_h
 #define cmWIXSourceWriter_h
 
-#include <vector>
-#include <string>
 #include <cmsys/FStream.hxx>
+#include <string>
+#include <vector>
 
 #include <CPack/cmCPackLog.h>
 

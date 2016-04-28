@@ -13,9 +13,9 @@
 #define cmTarget_h
 
 #include "cmCustomCommand.h"
-#include "cmPropertyMap.h"
-#include "cmPolicies.h"
 #include "cmListFileCache.h"
+#include "cmPolicies.h"
+#include "cmPropertyMap.h"
 
 #include <cmsys/auto_ptr.hxx>
 #if defined(CMAKE_BUILD_WITH_CMAKE)

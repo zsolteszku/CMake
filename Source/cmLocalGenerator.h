@@ -13,9 +13,9 @@
 #define cmLocalGenerator_h
 
 #include "cmStandardIncludes.h"
+#include "cmOutputConverter.h"
 #include "cmState.h"
 #include "cmake.h"
-#include "cmOutputConverter.h"
 
 class cmMakefile;
 class cmGlobalGenerator;

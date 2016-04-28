@@ -12,8 +12,8 @@
 #include "cmWriteFileCommand.h"
 #include <cmsys/FStream.hxx>
 
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 // cmLibraryCommand
 bool cmWriteFileCommand

@@ -12,8 +12,8 @@
 #ifndef cmCursesLabelWidget_h
 #define cmCursesLabelWidget_h
 
-#include "cmCursesWidget.h"
 #include "cmCursesStandardIncludes.h"
+#include "cmCursesWidget.h"
 
 class cmCursesMainForm;
 

@@ -2,9 +2,9 @@
 #include "FirstConfigure.h"
 #include "Compilers.h"
 
-#include <QSettings>
-#include <QRadioButton>
 #include <QComboBox>
+#include <QRadioButton>
+#include <QSettings>
 #include <QVBoxLayout>
 
 
