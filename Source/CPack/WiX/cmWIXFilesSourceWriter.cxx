@@ -15,8 +15,8 @@
 
 #include <cmInstalledFile.h>
 
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 cmWIXFilesSourceWriter::cmWIXFilesSourceWriter(cmCPackLog* logger,
   std::string const& filename):

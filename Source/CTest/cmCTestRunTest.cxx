@@ -9,10 +9,10 @@
   implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the License for more information.
 ============================================================================*/
-
 #include "cmCTestRunTest.h"
-#include "cmCTestMemCheckHandler.h"
+
 #include "cmCTest.h"
+#include "cmCTestMemCheckHandler.h"
 #include "cmSystemTools.h"
 #include "cm_curl.h"
 

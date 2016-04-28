@@ -12,10 +12,10 @@
 #ifndef cmCommand_h
 #define cmCommand_h
 
-#include "cmObject.h"
+#include "cmCommandArgumentsHelper.h"
 #include "cmListFileCache.h"
 #include "cmMakefile.h"
-#include "cmCommandArgumentsHelper.h"
+#include "cmObject.h"
 
 /** \class cmCommand
  * \brief Superclass for all commands in CMake.

@@ -9,9 +9,9 @@
   implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the License for more information.
 ============================================================================*/
+#include "../cmDocumentation.h"
 #include "../cmSystemTools.h"
 #include "../cmake.h"
-#include "../cmDocumentation.h"
 
 #include <signal.h>
 #include <sys/ioctl.h>

@@ -13,8 +13,8 @@
 #define cmCTestMultiProcessHandler_h
 
 #include <cmStandardIncludes.h>
-#include <cmCTestTestHandler.h>
 #include <cmCTestRunTest.h>
+#include <cmCTestTestHandler.h>
 
 /** \class cmCTestMultiProcessHandler
  * \brief run parallel ctest

@@ -12,11 +12,11 @@
 ============================================================================*/
 #include "cmNinjaUtilityTargetGenerator.h"
 #include "cmCustomCommand.h"
+#include "cmCustomCommandGenerator.h"
 #include "cmGeneratedFileStream.h"
 #include "cmGlobalNinjaGenerator.h"
 #include "cmMakefile.h"
 #include "cmSourceFile.h"
-#include "cmCustomCommandGenerator.h"
 
 cmNinjaUtilityTargetGenerator::cmNinjaUtilityTargetGenerator(
     cmGeneratorTarget *target)

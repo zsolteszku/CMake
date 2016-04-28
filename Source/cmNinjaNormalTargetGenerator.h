@@ -13,9 +13,9 @@
 #ifndef cmNinjaNormalTargetGenerator_h
 #  define cmNinjaNormalTargetGenerator_h
 
+#  include "cmStandardIncludes.h"
 #  include "cmNinjaTargetGenerator.h"
 #  include "cmNinjaTypes.h"
-#  include "cmStandardIncludes.h"
 
 #  include <set>
 

@@ -11,14 +11,14 @@
 ============================================================================*/
 #include "cmMakefile.h"
 
+#include "cmAlgorithms.h"
+#include "cmGeneratorExpression.h"
+#include "cmGeneratorExpressionDAGChecker.h"
 #include "cmGeneratorExpressionEvaluator.h"
 #include "cmGeneratorExpressionParser.h"
-#include "cmGeneratorExpressionDAGChecker.h"
-#include "cmGeneratorExpression.h"
-#include "cmLocalGenerator.h"
 #include "cmGlobalGenerator.h"
+#include "cmLocalGenerator.h"
 #include "cmSourceFile.h"
-#include "cmAlgorithms.h"
 
 #include <cmsys/String.h>
 

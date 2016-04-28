@@ -12,8 +12,8 @@
 #ifndef cmLocalVisualStudioGenerator_h
 #define cmLocalVisualStudioGenerator_h
 
-#include "cmLocalGenerator.h"
 #include "cmGlobalVisualStudioGenerator.h"
+#include "cmLocalGenerator.h"
 
 #include <cmsys/auto_ptr.hxx>
 

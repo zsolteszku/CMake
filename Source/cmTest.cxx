@@ -12,8 +12,8 @@
 #include "cmTest.h"
 #include "cmSystemTools.h"
 
-#include "cmake.h"
 #include "cmMakefile.h"
+#include "cmake.h"
 
 //----------------------------------------------------------------------------
 cmTest::cmTest(cmMakefile* mf)

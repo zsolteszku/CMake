@@ -19,13 +19,13 @@
 
 #include <vector>
 
+#include <QAtomicInt>
+#include <QList>
+#include <QMetaType>
 #include <QObject>
 #include <QString>
-#include <QVariant>
-#include <QList>
 #include <QStringList>
-#include <QMetaType>
-#include <QAtomicInt>
+#include <QVariant>
 
 #include "cmake.h"
 

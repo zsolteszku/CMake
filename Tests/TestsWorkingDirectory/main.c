@@ -5,8 +5,8 @@
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__WATCOMC__) || defined(__BORLANDC__) || defined(__MINGW32__))
 
-#include <io.h>
 #include <direct.h>
+#include <io.h>
 
 #if defined(__WATCOMC__)
 #include <direct.h>
@@ -38,8 +38,8 @@ static const char* Getcwd(char* buf, unsigned int len)
 }
 
 #else
-#include <sys/types.h>
 #include <fcntl.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 static const char* Getcwd(char* buf, unsigned int len)

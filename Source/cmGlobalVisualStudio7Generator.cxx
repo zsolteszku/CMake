@@ -10,13 +10,15 @@
   See the License for more information.
 ============================================================================*/
 #include "windows.h" // this must be first to define GetCurrentDirectory
-#include <assert.h>
+
 #include "cmGlobalVisualStudio7Generator.h"
+
 #include "cmGeneratedFileStream.h"
 #include "cmLocalVisualStudio7Generator.h"
 #include "cmMakefile.h"
 #include "cmUuid.h"
 #include "cmake.h"
+#include <assert.h>
 #include <cmsys/Encoding.hxx>
 
 //----------------------------------------------------------------------------

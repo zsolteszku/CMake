@@ -1,12 +1,13 @@
+#include "cmParseDelphiCoverage.h"
+
 #include "cmStandardIncludes.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include "cmSystemTools.h"
 #include "cmXMLParser.h"
-#include "cmParseDelphiCoverage.h"
 #include <cmsys/Directory.hxx>
-#include <cmsys/Glob.hxx>
 #include <cmsys/FStream.hxx>
+#include <cmsys/Glob.hxx>
+#include <stdio.h>
+#include <stdlib.h>
 
 
 class cmParseDelphiCoverage::HTMLParser

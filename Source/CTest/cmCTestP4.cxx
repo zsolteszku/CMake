@@ -14,12 +14,12 @@
 #include "cmCTest.h"
 #include "cmSystemTools.h"
 
-#include <cmsys/RegularExpression.hxx>
 #include <cmsys/Process.h>
+#include <cmsys/RegularExpression.hxx>
 
+#include <ctype.h>
 #include <sys/types.h>
 #include <time.h>
-#include <ctype.h>
 
 //----------------------------------------------------------------------------
 cmCTestP4::cmCTestP4(cmCTest* ct, std::ostream& log):

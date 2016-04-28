@@ -10,10 +10,10 @@
   See the License for more information.
 ============================================================================*/
 
-#include "cmCTestBatchTestHandler.h"
-#include "cmProcess.h"
 #include "cmStandardIncludes.h"
+#include "cmCTestBatchTestHandler.h"
 #include "cmCTest.h"
+#include "cmProcess.h"
 #include "cmSystemTools.h"
 #include <stdlib.h>
 

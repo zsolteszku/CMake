@@ -18,8 +18,8 @@
 
 #include <CPack/cmCPackGenerator.h>
 
-#include <string>
 #include <map>
+#include <string>
 
 class cmWIXSourceWriter;
 class cmWIXDirectoriesSourceWriter;

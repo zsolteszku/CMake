@@ -1,8 +1,8 @@
 // MainFrm.cpp : implementation of the CMainFrame class
 //
 
-#include "stdafx.h"
 #include "mfc1.h"
+#include "stdafx.h"
 
 #include "MainFrm.h"
 
