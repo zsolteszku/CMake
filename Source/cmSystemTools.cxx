@@ -38,8 +38,9 @@
 #include <cmsys/Terminal.h>
 
 #if defined(_WIN32)
-# include <wincrypt.h>
 # include <windows.h>
+  // include wincrypt.h after windows.h
+# include <wincrypt.h>
 #else
 # include <sys/types.h>
 # include <sys/time.h>
