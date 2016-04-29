@@ -11,6 +11,7 @@
 ============================================================================*/
 
 #include "cmCTestMemCheckHandler.h"
+
 #include "cmCTest.h"
 #include "cmGeneratedFileStream.h"
 #include "cmMakefile.h"

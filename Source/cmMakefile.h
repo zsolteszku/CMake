@@ -12,6 +12,8 @@
 #ifndef cmMakefile_h
 #define cmMakefile_h
 
+#include "cmStandardIncludes.h"
+
 #include "cmAlgorithms.h"
 #include "cmExecutionStatus.h"
 #include "cmExpandedCommandArgument.h"

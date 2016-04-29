@@ -11,6 +11,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmGlobalNinjaGenerator.h"
+
 #include "cmAlgorithms.h"
 #include "cmGeneratedFileStream.h"
 #include "cmGeneratorExpressionEvaluationFile.h"

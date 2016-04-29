@@ -14,9 +14,9 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <sys/types.h>
 #include <sstream>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 //----------------------------------------------------------------------------
 std::string cmTimestamp::CurrentTime(

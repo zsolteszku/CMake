@@ -24,10 +24,10 @@
 #include "cmCPackZIPGenerator.h"
 
 #ifdef __APPLE__
-#  include "cmCPackBundleGenerator.h"
-#  include "cmCPackDragNDropGenerator.h"
-#  include "cmCPackOSXX11Generator.h"
-#  include "cmCPackPackageMakerGenerator.h"
+#   include "cmCPackBundleGenerator.h"
+#   include "cmCPackDragNDropGenerator.h"
+#   include "cmCPackOSXX11Generator.h"
+#   include "cmCPackPackageMakerGenerator.h"
 #endif
 
 #ifdef __CYGWIN__

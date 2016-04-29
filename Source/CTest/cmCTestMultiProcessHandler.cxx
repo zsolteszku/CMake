@@ -11,10 +11,10 @@
 ============================================================================*/
 #include "cmCTestMultiProcessHandler.h"
 
-#include "cmStandardIncludes.h"
 #include "cmCTest.h"
 #include "cmCTestScriptHandler.h"
 #include "cmProcess.h"
+#include "cmStandardIncludes.h"
 #include "cmSystemTools.h"
 #include <cmsys/FStream.hxx>
 #include <cmsys/SystemInformation.hxx>

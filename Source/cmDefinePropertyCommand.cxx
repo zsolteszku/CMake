@@ -10,6 +10,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmDefinePropertyCommand.h"
+
 #include "cmState.h"
 #include "cmake.h"
 

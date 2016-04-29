@@ -12,6 +12,8 @@
 #ifndef cmTest_h
 #define cmTest_h
 
+#include "cmStandardIncludes.h"
+
 #include "cmCustomCommand.h"
 #include "cmListFileCache.h"
 #include "cmPropertyMap.h"

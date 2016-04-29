@@ -16,6 +16,8 @@
 #endif
 #endif
 
+#include "cmGlobalGenerator.h"
+
 #include "cmAlgorithms.h"
 #include "cmCPackPropertiesGenerator.h"
 #include "cmComputeTargetDepends.h"
@@ -24,7 +26,6 @@
 #include "cmGeneratedFileStream.h"
 #include "cmGeneratorExpression.h"
 #include "cmGeneratorTarget.h"
-#include "cmGlobalGenerator.h"
 #include "cmInstallGenerator.h"
 #include "cmLocalGenerator.h"
 #include "cmMakefile.h"

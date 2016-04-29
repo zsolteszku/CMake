@@ -15,6 +15,7 @@
    methods on the CMake classes. */
 
 #include "cmCPluginAPI.h"
+
 #include "cmMakefile.h"
 #include "cmVersion.h"
 

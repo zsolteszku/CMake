@@ -13,6 +13,8 @@
 #ifndef cmake_h
 #define cmake_h
 
+#include "cmStandardIncludes.h"
+
 #include "cmCacheManager.h"
 #include "cmInstalledFile.h"
 #include "cmListFileCache.h"

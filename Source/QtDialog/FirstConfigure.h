@@ -2,11 +2,13 @@
 #ifndef FirstConfigure_h
 #define FirstConfigure_h
 
-#include "cmake.h"
-#include "ui_Compilers.h"
-#include "ui_CrossCompiler.h"
 #include <QWizard>
 #include <QWizardPage>
+
+#include "cmake.h"
+
+#include "ui_Compilers.h"
+#include "ui_CrossCompiler.h"
 
 class QRadioButton;
 class QComboBox;

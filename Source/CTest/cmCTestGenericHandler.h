@@ -13,8 +13,9 @@
 #ifndef cmCTestGenericHandler_h
 #define cmCTestGenericHandler_h
 
-#include "cmCTest.h"
 #include "cmObject.h"
+
+#include "cmCTest.h"
 #include "cmSystemTools.h" //OutputOption
 
 class cmMakefile;

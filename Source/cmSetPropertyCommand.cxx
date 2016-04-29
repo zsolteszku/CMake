@@ -10,6 +10,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmSetPropertyCommand.h"
+
 #include "cmSetSourceFilesPropertiesCommand.h"
 #include "cmSetTargetPropertiesCommand.h"
 #include "cmSetTestsPropertiesCommand.h"

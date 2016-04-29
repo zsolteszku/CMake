@@ -11,8 +11,9 @@
 ============================================================================*/
 #include "cmCurl.h" // include before anything that includes windows.h
 
-#include "cmAlgorithms.h"
 #include "cmCTest.h"
+
+#include "cmAlgorithms.h"
 #include "cmCTestCommand.h"
 #include "cmCTestStartCommand.h"
 #include "cmDynamicLoader.h"

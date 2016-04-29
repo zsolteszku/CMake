@@ -12,8 +12,9 @@
 #ifndef cmCTestSubmitCommand_h
 #define cmCTestSubmitCommand_h
 
-#include "cmCTest.h"
 #include "cmCTestHandlerCommand.h"
+
+#include "cmCTest.h"
 
 /** \class cmCTestSubmit
  * \brief Run a ctest script

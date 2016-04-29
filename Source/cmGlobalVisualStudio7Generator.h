@@ -12,8 +12,9 @@
 #ifndef cmGlobalVisualStudio7Generator_h
 #define cmGlobalVisualStudio7Generator_h
 
-#include "cmGlobalGeneratorFactory.h"
 #include "cmGlobalVisualStudioGenerator.h"
+
+#include "cmGlobalGeneratorFactory.h"
 
 class cmTarget;
 struct cmIDEFlagTable;
