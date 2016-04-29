@@ -9,8 +9,8 @@
   implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the License for more information.
 ============================================================================*/
-
 #include "cmSystemTools.h"
+
 #include "cmAlgorithms.h"
 #include <ctype.h>
 #include <errno.h>
