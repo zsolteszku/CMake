@@ -10,6 +10,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmCursesCacheEntryComposite.h"
+
 #include "../cmState.h"
 #include "../cmSystemTools.h"
 #include "../cmake.h"
