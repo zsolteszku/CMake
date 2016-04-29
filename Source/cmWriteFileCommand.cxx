@@ -10,10 +10,11 @@
   See the License for more information.
 ============================================================================*/
 #include "cmWriteFileCommand.h"
+
 #include <cmsys/FStream.hxx>
 
-#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 
 // cmLibraryCommand
 bool cmWriteFileCommand

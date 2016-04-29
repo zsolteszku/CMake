@@ -17,8 +17,8 @@
 #include <cmsys/Process.h>
 #include <cmsys/RegularExpression.hxx>
 
-#include <ctype.h>
 #include <sys/types.h>
+#include <ctype.h>
 #include <time.h>
 
 //----------------------------------------------------------------------------

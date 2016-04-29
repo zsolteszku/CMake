@@ -11,6 +11,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmExtraKateGenerator.h"
+
 #include "cmGeneratedFileStream.h"
 #include "cmGlobalUnixMakefileGenerator3.h"
 #include "cmLocalUnixMakefileGenerator3.h"

@@ -10,6 +10,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmFileCommand.h"
+
 #include "cmAlgorithms.h"
 #include "cmCryptoHash.h"
 #include "cmCryptoHash.h"
@@ -27,9 +28,9 @@
 #endif
 
 #undef GetCurrentDirectory
+#include <sys/types.h>
 #include <assert.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #include <cmsys/Directory.hxx>
 #include <cmsys/Encoding.hxx>

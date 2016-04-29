@@ -9,6 +9,7 @@
   implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the License for more information.
 ============================================================================*/
+
 #include "cmCPackDebGenerator.h"
 
 #include "cmArchiveWrite.h"
@@ -759,8 +760,8 @@ std::string cmCPackDebGenerator::GetComponentInstallDirNameSuffix(
  * SUCH DAMAGE.
  */
 
-#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 
 #include <stdio.h>
 #include <stdlib.h>

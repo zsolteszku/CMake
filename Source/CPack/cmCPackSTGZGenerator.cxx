@@ -18,9 +18,9 @@
 #include "cmSystemTools.h"
 #include "cmake.h"
 
+#include <sys/types.h>
 #include <cmsys/FStream.hxx>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 //----------------------------------------------------------------------
 cmCPackSTGZGenerator::cmCPackSTGZGenerator()

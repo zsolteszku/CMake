@@ -11,6 +11,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmNinjaTargetGenerator.h"
+
 #include "cmAlgorithms.h"
 #include "cmComputeLinkInformation.h"
 #include "cmCustomCommandGenerator.h"

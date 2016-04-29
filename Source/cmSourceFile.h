@@ -12,9 +12,10 @@
 #ifndef cmSourceFile_h
 #define cmSourceFile_h
 
+#include "cmSourceFileLocation.h"
+
 #include "cmCustomCommand.h"
 #include "cmPropertyMap.h"
-#include "cmSourceFileLocation.h"
 
 class cmake;
 

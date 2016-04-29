@@ -10,6 +10,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmLocalVisualStudio7Generator.h"
+
 #include "cmCustomCommandGenerator.h"
 #include "cmGeneratorTarget.h"
 #include "cmGlobalVisualStudio7Generator.h"

@@ -18,8 +18,9 @@
 #include "cmMakefile.h"
 #include "cmUuid.h"
 #include "cmake.h"
-#include <assert.h>
 #include <cmsys/Encoding.hxx>
+
+#include <assert.h>
 
 //----------------------------------------------------------------------------
 static cmVS7FlagTable cmVS7ExtraFlagTable[] =

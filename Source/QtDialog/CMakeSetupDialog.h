@@ -14,6 +14,7 @@
 #define CMakeSetupDialog_h
 
 #include "QCMake.h"
+
 #include "ui_CMakeSetupDialog.h"
 #include <QEventLoop>
 #include <QMainWindow>

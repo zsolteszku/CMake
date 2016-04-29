@@ -1,6 +1,5 @@
 #include "cmParseJacocoCoverage.h"
 
-#include "cmStandardIncludes.h"
 #include "cmSystemTools.h"
 #include "cmXMLParser.h"
 #include <cmsys/Directory.hxx>

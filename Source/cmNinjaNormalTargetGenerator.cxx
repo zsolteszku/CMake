@@ -11,6 +11,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmNinjaNormalTargetGenerator.h"
+
 #include "cmAlgorithms.h"
 #include "cmCustomCommandGenerator.h"
 #include "cmGeneratedFileStream.h"

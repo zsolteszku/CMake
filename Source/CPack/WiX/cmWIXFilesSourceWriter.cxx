@@ -11,12 +11,13 @@
 ============================================================================*/
 
 #include "cmWIXFilesSourceWriter.h"
+
 #include "cmWIXAccessControlList.h"
 
 #include <cmInstalledFile.h>
 
-#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 
 cmWIXFilesSourceWriter::cmWIXFilesSourceWriter(cmCPackLog* logger,
   std::string const& filename):

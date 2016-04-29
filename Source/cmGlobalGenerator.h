@@ -19,8 +19,8 @@
 #include "cmGeneratorExpression.h"
 #include "cmGeneratorTarget.h"
 #include "cmState.h"
-#include "cmSystemTools.h" // for cmSystemTools::OutputOption
-#include "cmTarget.h" // For cmTargets
+#include "cmSystemTools.h"  // for cmSystemTools::OutputOption
+#include "cmTarget.h"       // For cmTargets
 #include "cmTargetDepend.h" // For cmTargetDependSet
 
 #if defined(CMAKE_BUILD_WITH_CMAKE)

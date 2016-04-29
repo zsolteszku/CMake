@@ -10,6 +10,7 @@
   See the License for more information.
 ============================================================================*/
 #include "cmake.h"
+
 #include "cmAlgorithms.h"
 #include "cmCommand.h"
 #include "cmCommands.h"
@@ -99,7 +100,6 @@
 #    define CMAKE_USE_XCODE 1
 #  endif
 #  include <sys/types.h>
-
 #  include <sys/resource.h>
 #  include <sys/time.h>
 #endif

@@ -11,6 +11,7 @@
 ============================================================================*/
 
 #include "CMakeSetupDialog.h"
+
 #include <QCloseEvent>
 #include <QCoreApplication>
 #include <QDialogButtonBox>
