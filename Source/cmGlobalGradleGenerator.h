@@ -25,6 +25,8 @@ class cmGlobalGradleGenerator : public cmGlobalGenerator {
 
 public:
   cmGlobalGradleGenerator(cmake *cm);
+
+  virtual ~cmGlobalGradleGenerator() {}
   static cmGlobalGeneratorFactory *NewFactory();
 
   ///! Get the name for the generator.

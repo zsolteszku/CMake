@@ -14,6 +14,7 @@
 #include "cmGeneratedFileStream.h"
 #include "cmGlobalGeneratorFactory.h"
 #include "cmLocalGenerator.h"
+#include "cmLocalGradleGenerator.h"
 #include "cmMakefile.h"
 #include "cmSystemTools.h"
 
@@ -110,7 +111,7 @@ void cmGlobalGradleGenerator::AppendDirectoryForConfig(
 cmLocalGenerator *
 cmGlobalGradleGenerator::CreateLocalGenerator(cmMakefile *mf) {
   // TODO(zsessigkacso): implement
-  return 0;
+  return new cmLocalGradleGenerator(this, mf);
 }
 
 const char *cmGlobalGradleGenerator::GetCMakeCFGIntDir() const {

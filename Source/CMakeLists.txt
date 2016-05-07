@@ -273,6 +273,8 @@ set(SRCS
   cmGlobalUnixMakefileGenerator3.h
   cmGlobalGradleGenerator.h
   cmGlobalGradleGenerator.cxx
+  cmLocalGradleGenerator.h
+  cmLocalGradleGenerator.cxx
   cmGraphAdjacencyList.h
   cmGraphVizWriter.cxx
   cmGraphVizWriter.h
