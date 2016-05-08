@@ -240,36 +240,64 @@ std::string cmGlobalGradleGenerator::GetOptionalDefinition(
 void cmGlobalGradleGenerator::FillDefaultConfigBlock(
     cmLocalGenerator *root, cmGradleBlock *defaultConfigBlock) {
   auto mk = root->GetMakefile();
-  defaultConfigBlock->AppendChild(new cmGradleSimpleSetting(
+  defaultConfigBlock->AppendChild(new cmGradleSetSetting(
       "applicationId",
-      mk->GetRequiredDefinition("GRADLE_ANDROID_APPLICATION_ID"),
-      cmGradleSimpleSetting::Equality::USE,
-      cmGradleSimpleSetting::Apostrope::SIMPLE));
+      new cmGradleSimpleValue(
+          mk->GetRequiredDefinition("GRADLE_ANDROID_APPLICATION_ID"),
+          cmGradleSimpleValue::Apostrope::SIMPLE)));
 
-  defaultConfigBlock->AppendChild(new cmGradleSimpleSetting(
+  defaultConfigBlock->AppendChild(new cmGradleSetSetting(
       "minSdkVersion.apiLevel",
-      GetOptionalDefinition(mk, "GRADLE_ANDROID_MIN_SDK_API_LEVEL", "4")));
+      new cmGradleSimpleValue(
+          GetOptionalDefinition(mk, "GRADLE_ANDROID_MIN_SDK_API_LEVEL", "4"))));
 
-  defaultConfigBlock->AppendChild(new cmGradleSimpleSetting(
+  defaultConfigBlock->AppendChild(new cmGradleSetSetting(
       "targetSdkVersion.apiLevel",
-      GetOptionalDefinition(mk, "GRADLE_ANDROID_TARGET_SDK_API_LEVEL", "23")));
+      new cmGradleSimpleValue(GetOptionalDefinition(
+          mk, "GRADLE_ANDROID_TARGET_SDK_API_LEVEL", "23"))));
+}
+
+void cmGlobalGradleGenerator::SplitBySpaces(const std::string &str,
+                                            std::vector<std::string> &res) {
+  const char sep = ' ';
+  size_t size = str.size();
+  size_t end = 0;
+  size_t start = end;
+  for (end = 0; end < size && (end = str.find(sep, end)) != std::string::npos;
+       start = ++end) {
+    res.push_back(str.substr(start, end - start));
+  }
+  if (start < size) {
+    res.push_back(str.substr(start));
+  }
 }
 
 void cmGlobalGradleGenerator::FillNDKBlock(cmLocalGenerator *root,
                                            cmGradleBlock *ndkBlock) {
   auto mk = root->GetMakefile();
-  ndkBlock->AppendChild(new cmGradleSimpleSetting(
-      "platformVersion",
-      GetOptionalDefinition(mk, "GRADLE_ANDROID_NDK_VERSION", "9")));
+  ndkBlock->AppendChild(new cmGradleSetSetting(
+      "platformVersion", new cmGradleSimpleValue(GetOptionalDefinition(
+                             mk, "GRADLE_ANDROID_NDK_VERSION", "9"))));
 
-  ndkBlock->AppendChild(new cmGradleSimpleSetting(
-      "moduleName", GetOptionalDefinition(mk, "GRADLE_ANDROID_JNI_MODULE_NAME",
-                                          root->GetProjectName() + "-jni")));
+  ndkBlock->AppendChild(new cmGradleSetSetting(
+      "moduleName",
+      new cmGradleSimpleValue(
+          GetOptionalDefinition(mk, "GRADLE_ANDROID_JNI_MODULE_NAME",
+                                root->GetProjectName() + "-jni"),
+          cmGradleSimpleValue::Apostrope::SIMPLE)));
 
-  ndkBlock->AppendChild(new cmGradleSimpleSetting(
-      "toolchain", mk->GetRequiredDefinition("GRADLE_ANDROID_NDK_TOOLCHAIN"),
-      cmGradleSimpleSetting::Equality::USE,
-      cmGradleSimpleSetting::Apostrope::SIMPLE));
+  ndkBlock->AppendChild(new cmGradleSetSetting(
+      "toolchain",
+      new cmGradleSimpleValue(
+          mk->GetRequiredDefinition("GRADLE_ANDROID_NDK_TOOLCHAIN"),
+          cmGradleSimpleValue::Apostrope::SIMPLE)));
+  {
+    std::string jni_flags = GetOptionalDefinition(mk, "JNI_FLAGS", "");
+    std::vector<std::string> flags;
+    SplitBySpaces(jni_flags, flags);
+    // TODO(zsessigkacso): implement
+    // ndkBlock->AppendChild(NULL);
+  }
 }
 
 cmGlobalGradleGenerator::SourceFileType
@@ -292,14 +320,16 @@ bool cmGlobalGradleGenerator::HaveNativeSourceFiles(cmMakefile *mk) const {
 void cmGlobalGradleGenerator::FillAndroidBlock(cmLocalGenerator *root,
                                                cmGradleBlock *androidBlock) {
   auto mk = root->GetMakefile();
-  androidBlock->AppendChild(new cmGradleSimpleSetting(
+  androidBlock->AppendChild(new cmGradleSetSetting(
       "compileSdkVersion",
-      GetOptionalDefinition(mk, "GRADLE_ANDROID_COMPILE_SDK_VERSION", "23")));
-  androidBlock->AppendChild(new cmGradleSimpleSetting(
+      new cmGradleSimpleValue(GetOptionalDefinition(
+          mk, "GRADLE_ANDROID_COMPILE_SDK_VERSION", "23"))));
+  androidBlock->AppendChild(new cmGradleSetSetting(
       "buildToolsVersion",
-      GetOptionalDefinition(mk, "GRADLE_ANDROID_BUILD_TOOLS_VERSION", "23.0.2"),
-      cmGradleSimpleSetting::Equality::USE,
-      cmGradleSimpleSetting::Apostrope::SIMPLE));
+      new cmGradleSimpleValue(
+          GetOptionalDefinition(mk, "GRADLE_ANDROID_BUILD_TOOLS_VERSION",
+                                "23.0.2"),
+          cmGradleSimpleValue::Apostrope::SIMPLE)));
 
   {
     cmsys::auto_ptr<cmGradleBlock> defaultConfigBlock(

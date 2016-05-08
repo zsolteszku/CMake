@@ -121,6 +121,8 @@ private:
                               cmGradleBlock *defaultConfigBlock);
 
   void FillNDKBlock(cmLocalGenerator *root, cmGradleBlock *ndkBlock);
+    
+   static void SplitBySpaces(const std::string& str, std::vector<std::string>& res);
 
   enum class SourceFileType { UNKOWN, JAVA, CPP };
 

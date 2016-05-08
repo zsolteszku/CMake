@@ -28,7 +28,7 @@ void cmGradlePlugin::Write(std::ostream &fout,
 
 cmGradleBlock::cmGradleBlock(const std::string &name) : BlockName(name) {}
 
-void cmGradleBlock::AppendChild(cmGradleValue *value) {
+void cmGradleBlock::AppendChild(cmGradleExpression *value) {
   Childs.push_back(value);
 }
 
@@ -52,26 +52,31 @@ void cmGradleBlock::Write(std::ostream &fout,
   fout << "}" << std::endl;
 }
 
-cmGradleSetting::cmGradleSetting(const std::string &name) : SettingName(name) {}
+cmGradleSetSetting::cmGradleSetSetting(const std::string &name,
+                                       cmGradleValue *value, Equality equality)
+    : SettingName(name), Value(value), UseEqualitySign(equality) {}
 
-cmGradleSimpleSetting::cmGradleSimpleSetting(const std::string &name,
-                                             const std::string &value,
-                                             Equality equality,
-                                             Apostrope apostrope)
-    : cmGradleSetting(name), SettingValue(value), UseEqualitySign(equality),
-      UseApostrophes(apostrope) {}
-
-const char *cmGradleSimpleSetting::GetEquality() const {
+const char *cmGradleSetSetting::GetEquality() const {
   return (UseEqualitySign == Equality::USE ? " = " : " ");
 }
 
-const char *cmGradleSimpleSetting::GetApostrophe() const {
-  return (UseApostrophes == Apostrope::SIMPLE ? "'" : "");
+void cmGradleSetSetting::Write(std::ostream &fout,
+                               cmGradleCurrentState &state) const {
+  Indent(fout, state);
+  fout << SettingName << GetEquality();
+  Value->Write(fout, state);
+  fout << std::endl;
 }
 
-void cmGradleSimpleSetting::Write(std::ostream &fout,
-                                  cmGradleCurrentState &state) const {
-  Indent(fout, state);
-  fout << SettingName << GetEquality() << GetApostrophe() << SettingValue
-       << GetApostrophe() << std::endl;
+cmGradleSimpleValue::cmGradleSimpleValue(const std::string &value,
+                                         Apostrope apostrophe)
+    : SettingValue(value), UseApostrophes(apostrophe) {}
+
+void cmGradleSimpleValue::Write(std::ostream &fout,
+                                cmGradleCurrentState &state) const {
+  fout << GetApostrophe() << SettingValue << GetApostrophe();
+}
+
+const char *cmGradleSimpleValue::GetApostrophe() const {
+  return (UseApostrophes == Apostrope::SIMPLE ? "'" : "");
 }

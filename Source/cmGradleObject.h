@@ -14,6 +14,8 @@
 
 #include "cmStandardIncludes.h"
 
+#include <cmsys/auto_ptr.hxx>
+
 struct cmGradleCurrentState {
   size_t IndentSize;
   cmGradleCurrentState() : IndentSize(0) {}
@@ -24,7 +26,7 @@ struct cmGradleCurrentState {
 class cmGradleObject {
 
 public:
-  enum class Type { PLUGIN, BLOCK, SETTING };
+  enum class Type { PLUGIN, BLOCK, SET_SETTING, VALUE };
   void Indent(std::ostream &fout, cmGradleCurrentState &state) const;
   virtual void Write(std::ostream &fout, cmGradleCurrentState &state) const = 0;
   virtual Type GetType() const = 0;
@@ -42,49 +44,61 @@ private:
   std::string PluginName;
 };
 
-class cmGradleValue : public cmGradleObject {};
+class cmGradleExpression : public cmGradleObject {};
 
-class cmGradleBlock : public cmGradleValue {
+class cmGradleBlock : public cmGradleExpression {
 public:
   explicit cmGradleBlock(const std::string &name);
   virtual void Write(std::ostream &fout,
                      cmGradleCurrentState &state) const override;
   virtual Type GetType() const override { return Type::BLOCK; }
-  virtual void AppendChild(cmGradleValue *value);
+  virtual void AppendChild(cmGradleExpression *value);
 
   virtual ~cmGradleBlock();
 
 private:
   std::string BlockName;
-  std::vector<cmGradleValue *> Childs;
+  std::vector<cmGradleExpression *> Childs;
 };
 
-class cmGradleSetting : public cmGradleValue {
+class cmGradleValue : public cmGradleObject {
 public:
-  explicit cmGradleSetting(const std::string &name);
-  virtual Type GetType() const override { return Type::SETTING; }
-
-protected:
-  std::string SettingName;
+  virtual Type GetType() const override { return Type::VALUE; }
 };
 
-class cmGradleSimpleSetting : public cmGradleSetting {
+class cmGradleSetSetting : public cmGradleExpression {
 public:
   enum class Equality { USE, DO_NOT_USE };
-  enum class Apostrope { SIMPLE, DO_NOT_USE };
-  cmGradleSimpleSetting(const std::string &name, const std::string &value,
-                        Equality equality = Equality::USE,
-                        Apostrope apostrope = Apostrope::DO_NOT_USE);
+  explicit cmGradleSetSetting(const std::string &name, cmGradleValue *value,
+                              Equality equality = Equality::USE);
+  virtual Type GetType() const override { return Type::SET_SETTING; }
   virtual void Write(std::ostream &fout,
                      cmGradleCurrentState &state) const override;
 
   const char *GetEquality() const;
+
+protected:
+  std::string SettingName;
+  cmsys::auto_ptr<cmGradleValue> Value;
+  Equality UseEqualitySign;
+};
+
+class cmGradleSimpleValue : public cmGradleValue {
+public:
+  enum class Apostrope { SIMPLE, NONE };
+  cmGradleSimpleValue(const std::string &value,
+                      Apostrope apostrophe = Apostrope::NONE);
+
+  virtual void Write(std::ostream &fout,
+                     cmGradleCurrentState &state) const override;
+
   const char *GetApostrophe() const;
 
 private:
   std::string SettingValue;
-  Equality UseEqualitySign;
   Apostrope UseApostrophes;
 };
+
+// class cmGradleListValue : public
 
 #endif // cmGradleObject_h
