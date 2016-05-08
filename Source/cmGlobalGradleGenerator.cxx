@@ -265,7 +265,10 @@ void cmGlobalGradleGenerator::SplitBySpaces(const std::string &str,
   size_t start = end;
   for (end = 0; end < size && (end = str.find(sep, end)) != std::string::npos;
        start = ++end) {
-    res.push_back(str.substr(start, end - start));
+    size_t currSize = end - start;
+    if (currSize != 0) {
+      res.push_back(str.substr(start, currSize));
+    }
   }
   if (start < size) {
     res.push_back(str.substr(start));
@@ -295,8 +298,15 @@ void cmGlobalGradleGenerator::FillNDKBlock(cmLocalGenerator *root,
     std::string jni_flags = GetOptionalDefinition(mk, "JNI_FLAGS", "");
     std::vector<std::string> flags;
     SplitBySpaces(jni_flags, flags);
-    // TODO(zsessigkacso): implement
-    // ndkBlock->AppendChild(NULL);
+    {
+      cmsys::auto_ptr<cmGradleListValue> jniFlagsList(new cmGradleListValue);
+      for (const auto &flag : flags) {
+        jniFlagsList->AppendArgument(new cmGradleSimpleValue(
+            flag, cmGradleSimpleValue::Apostrope::SIMPLE));
+      }
+      ndkBlock->AppendChild(
+          new cmGradleFunctionCall("CFlags.addAll", jniFlagsList.release()));
+    }
   }
 }
 

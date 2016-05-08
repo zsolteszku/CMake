@@ -26,7 +26,7 @@ struct cmGradleCurrentState {
 class cmGradleObject {
 
 public:
-  enum class Type { PLUGIN, BLOCK, SET_SETTING, VALUE };
+  enum class Type { PLUGIN, BLOCK, SET_SETTING, VALUE, FUNCTION_CALL };
   void Indent(std::ostream &fout, cmGradleCurrentState &state) const;
   virtual void Write(std::ostream &fout, cmGradleCurrentState &state) const = 0;
   virtual Type GetType() const = 0;
@@ -99,6 +99,29 @@ private:
   Apostrope UseApostrophes;
 };
 
-// class cmGradleListValue : public
+class cmGradleListValue : public cmGradleValue {
+public:
+  cmGradleListValue(const std::vector<cmGradleValue *> &values =
+                        std::vector<cmGradleValue *>());
+  virtual void Write(std::ostream &fout,
+                     cmGradleCurrentState &state) const override;
+
+  void AppendArgument(cmGradleValue *argument);
+
+private:
+  std::vector<cmGradleValue *> Values;
+};
+
+class cmGradleFunctionCall : public cmGradleExpression {
+public:
+  cmGradleFunctionCall(const std::string &func_name, cmGradleValue *arg);
+  virtual Type GetType() const override { return Type::FUNCTION_CALL; }
+  virtual void Write(std::ostream &fout,
+                     cmGradleCurrentState &state) const override;
+
+private:
+  std::string FunctionName;
+  cmsys::auto_ptr<cmGradleValue> Argument;
+};
 
 #endif // cmGradleObject_h

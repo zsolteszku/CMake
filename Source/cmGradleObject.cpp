@@ -80,3 +80,37 @@ void cmGradleSimpleValue::Write(std::ostream &fout,
 const char *cmGradleSimpleValue::GetApostrophe() const {
   return (UseApostrophes == Apostrope::SIMPLE ? "'" : "");
 }
+
+cmGradleListValue::cmGradleListValue(const std::vector<cmGradleValue *> &values)
+    : Values(values) {}
+
+void cmGradleListValue::AppendArgument(cmGradleValue *argument) {
+  Values.push_back(argument);
+}
+
+void cmGradleListValue::Write(std::ostream &fout,
+                              cmGradleCurrentState &state) const {
+  fout << "[";
+  bool isFirst = true;
+  for (const auto &value : Values) {
+    if (isFirst) {
+      isFirst = false;
+    } else {
+      fout << ", ";
+    }
+    value->Write(fout, state);
+  }
+  fout << "]";
+}
+
+cmGradleFunctionCall::cmGradleFunctionCall(const std::string &func_name,
+                                           cmGradleValue *arg)
+    : FunctionName(func_name), Argument(arg) {}
+
+void cmGradleFunctionCall::Write(std::ostream &fout,
+                                 cmGradleCurrentState &state) const {
+  Indent(fout, state);
+  fout << FunctionName << "(";
+  Argument->Write(fout, state);
+  fout << ")" << std::endl;
+}
