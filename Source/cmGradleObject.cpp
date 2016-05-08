@@ -11,6 +11,8 @@
  ============================================================================*/
 #include "cmGradleObject.h"
 
+#include "cmSystemTools.h"
+
 cmGradlePlugin::cmGradlePlugin(const std::string &name) : PluginName(name) {}
 
 void cmGradleObject::Indent(std::ostream &fout,
@@ -113,4 +115,31 @@ void cmGradleFunctionCall::Write(std::ostream &fout,
   fout << FunctionName << "(";
   Argument->Write(fout, state);
   fout << ")" << std::endl;
+}
+
+cmGradleComment::cmGradleComment(const std::string &comment)
+    : Comment(comment), IsMultiline(comment.find('\n') != std::string::npos) {}
+
+void cmGradleComment::Write(std::ostream &fout,
+                            cmGradleCurrentState &state) const {
+  Indent(fout, state);
+  if (IsMultiline) {
+    fout << "/* ";
+    std::vector<std::string> lines;
+    cmSystemTools::Split(Comment.c_str(), lines);
+    bool isFirst = true;
+    for (const auto &line : lines) {
+      if (isFirst) {
+        isFirst = false;
+        fout << line << std::endl;
+      } else {
+        Indent(fout, state);
+        fout << " * " << line << std::endl;
+      }
+    }
+    Indent(fout, state);
+    fout << " */" << std::endl;
+  } else {
+    fout << "// " << Comment << std::endl;
+  }
 }

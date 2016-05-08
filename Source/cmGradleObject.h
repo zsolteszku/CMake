@@ -26,7 +26,7 @@ struct cmGradleCurrentState {
 class cmGradleObject {
 
 public:
-  enum class Type { PLUGIN, BLOCK, SET_SETTING, VALUE, FUNCTION_CALL };
+  enum class Type { PLUGIN, BLOCK, SET_SETTING, VALUE, FUNCTION_CALL, COMMENT };
   void Indent(std::ostream &fout, cmGradleCurrentState &state) const;
   virtual void Write(std::ostream &fout, cmGradleCurrentState &state) const = 0;
   virtual Type GetType() const = 0;
@@ -128,6 +128,18 @@ public:
 private:
   std::string FunctionName;
   cmsys::auto_ptr<cmGradleValue> Argument;
+};
+
+class cmGradleComment : public cmGradleExpression {
+public:
+  explicit cmGradleComment(const std::string &comment);
+  virtual Type GetType() const override { return Type::COMMENT; }
+  virtual void Write(std::ostream &fout,
+                     cmGradleCurrentState &state) const override;
+
+private:
+  std::string Comment;
+  bool IsMultiline;
 };
 
 #endif // cmGradleObject_h

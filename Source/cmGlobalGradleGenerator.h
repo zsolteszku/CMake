@@ -140,6 +140,9 @@ private:
   void FillBuildTypesBlock(cmLocalGenerator *root,
                            cmGradleBlock *buildTypesBlock);
 
+  void FillProductFlavorsBlock(cmLocalGenerator *root,
+                               cmGradleBlock *productFlavorsBlock);
+
   static void SplitBySpaces(const std::string &str,
                             std::vector<std::string> &res);
 

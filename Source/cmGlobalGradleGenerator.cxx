@@ -419,6 +419,14 @@ void cmGlobalGradleGenerator::FillBuildTypesBlock(
   }
 }
 
+void cmGlobalGradleGenerator::FillProductFlavorsBlock(
+    cmLocalGenerator *root, cmGradleBlock *productFlavorsBlock) {
+  auto mk = root->GetMakefile();
+  productFlavorsBlock->AppendChild(new cmGradleComment(
+      "for detailed abiFilter descriptions, refer to \"Supported ABIs\" @ \
+                                                         \nhttps://developer.android.com/ndk/guides/abis.html#sa"));
+}
+
 void cmGlobalGradleGenerator::FillAndroidBlock(cmLocalGenerator *root,
                                                cmGradleBlock *androidBlock) {
   auto mk = root->GetMakefile();
@@ -434,6 +442,7 @@ void cmGlobalGradleGenerator::FillAndroidBlock(cmLocalGenerator *root,
           cmGradleSimpleValue::Apostrope::SIMPLE)));
 
   {
+    // defaultConfig
     cmsys::auto_ptr<cmGradleBlock> defaultConfigBlock(
         new cmGradleBlock("defaultConfig"));
     FillDefaultConfigBlock(root, defaultConfigBlock.get());
@@ -441,15 +450,24 @@ void cmGlobalGradleGenerator::FillAndroidBlock(cmLocalGenerator *root,
   }
 
   if (HaveNativeSourceFiles(mk)) {
+    // ndk
     cmsys::auto_ptr<cmGradleBlock> ndkBlock(new cmGradleBlock("ndk"));
     FillNDKBlock(root, ndkBlock.get());
     androidBlock->AppendChild(ndkBlock.release());
   }
   {
+    // buildTypes
     cmsys::auto_ptr<cmGradleBlock> buildTypesBlock(
         new cmGradleBlock("buildTypes"));
     FillBuildTypesBlock(root, buildTypesBlock.get());
     androidBlock->AppendChild(buildTypesBlock.release());
+  }
+  {
+    // productFlavors
+    cmsys::auto_ptr<cmGradleBlock> productFlavorsBlock(
+        new cmGradleBlock("productFlavors"));
+    FillProductFlavorsBlock(root, productFlavorsBlock.get());
+    androidBlock->AppendChild(productFlavorsBlock.release());
   }
 }
 
