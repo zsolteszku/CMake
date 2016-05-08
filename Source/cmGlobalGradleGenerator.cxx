@@ -418,6 +418,40 @@ void cmGlobalGradleGenerator::FillBuildTypesBlock(
     buildTypesBlock->AppendChild(configBlock.release());
   }
 }
+namespace {
+const std::unordered_map<std::string, const char *> &
+SupportedABIAndArchPairs() {
+  static std::unordered_map<std::string, const char *> knownABIAndArchPairs;
+  if (knownABIAndArchPairs.empty()) {
+    using Pair = std::unordered_map<std::string, const char *>::value_type;
+    knownABIAndArchPairs.insert(Pair("armeabi", "arm"));
+    knownABIAndArchPairs.insert(Pair("armeabi-v7a", "arm7"));
+    knownABIAndArchPairs.insert(Pair("arm64-v8a", "arm8"));
+    knownABIAndArchPairs.insert(Pair("x86", "x86"));
+    knownABIAndArchPairs.insert(Pair("x86-64", "x86_64"));
+    knownABIAndArchPairs.insert(Pair("mips", "mips"));
+    knownABIAndArchPairs.insert(Pair("mips-64", "mips64"));
+  }
+  return knownABIAndArchPairs;
+}
+
+const std::string &DefaultSupportedABIsList() {
+  static std::string res;
+  if (res.empty()) {
+    const auto &knownABIAndArchPairs = SupportedABIAndArchPairs();
+    bool isFirst = true;
+    for (const auto &p : knownABIAndArchPairs) {
+      if (isFirst) {
+        isFirst = false;
+      } else {
+        res.push_back(';');
+      }
+      res.append(p.first);
+    }
+  }
+  return res;
+}
+}
 
 void cmGlobalGradleGenerator::FillProductFlavorsBlock(
     cmLocalGenerator *root, cmGradleBlock *productFlavorsBlock) {
@@ -425,6 +459,47 @@ void cmGlobalGradleGenerator::FillProductFlavorsBlock(
   productFlavorsBlock->AppendChild(new cmGradleComment(
       "for detailed abiFilter descriptions, refer to \"Supported ABIs\" @ \
                                                          \nhttps://developer.android.com/ndk/guides/abis.html#sa"));
+  std::string supportedABISStr = GetOptionalDefinition(
+      mk, "GRADLE_ANDROID_SUPPORTED_ABIS", DefaultSupportedABIsList());
+  std::vector<std::string> supportedABIS;
+  cmSystemTools::ExpandListArgument(supportedABISStr, supportedABIS);
+  for (const auto &abi : supportedABIS) {
+    std::string uppercase_abi = cmSystemTools::UpperCase(abi);
+    {
+      char *buffer = new char[uppercase_abi.length()];
+      uppercase_abi.copy(buffer, uppercase_abi.length());
+      cmSystemTools::ReplaceChars(buffer, "-", '_');
+      uppercase_abi = std::string(buffer);
+      delete[] buffer;
+    }
+    std::string arch = GetOptionalDefinition(
+        mk, "GRADLE_ANDROID_" + uppercase_abi + "_ABI_ARCHITECTURE",
+        GetABIDefaultArch(abi));
+    // TODO(zsessigkacso) error handling
+    if (!arch.empty()) {
+      cmsys::auto_ptr<cmGradleBlock> block(
+          new cmGradleBlock("create(\"" + arch + "\")"));
+      block->AppendChild(new cmGradleFunctionCall(
+          "ndk.abiFilters.add",
+          new cmGradleSimpleValue(abi,
+                                  cmGradleSimpleValue::Apostrope::SIMPLE)));
+      productFlavorsBlock->AppendChild(block.release());
+    }
+  }
+  productFlavorsBlock->AppendChild(new cmGradleComment(
+      "To include all cpu architectures, leaves abiFilters empty"));
+  productFlavorsBlock->AppendChild(new cmGradleFunctionCall(
+      "create",
+      new cmGradleSimpleValue("all", cmGradleSimpleValue::Apostrope::SIMPLE)));
+}
+
+const char *cmGlobalGradleGenerator::GetABIDefaultArch(const std::string &abi) {
+  const auto &knownABIAndArchPairs = SupportedABIAndArchPairs();
+  auto it = knownABIAndArchPairs.find(abi);
+  if (it == knownABIAndArchPairs.end())
+    return "";
+  else
+    return it->second;
 }
 
 void cmGlobalGradleGenerator::FillAndroidBlock(cmLocalGenerator *root,

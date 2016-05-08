@@ -152,6 +152,8 @@ private:
 
   bool HaveNativeSourceFiles(cmMakefile *mk) const;
 
+  const char *GetABIDefaultArch(const std::string &abi);
+
 private:
   class Factory;
 
