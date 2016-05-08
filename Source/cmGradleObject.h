@@ -99,6 +99,12 @@ private:
   Apostrope UseApostrophes;
 };
 
+class cmGradleBoolValue : public cmGradleSimpleValue {
+public:
+  cmGradleBoolValue(bool value)
+      : cmGradleSimpleValue(value ? "true" : "false") {}
+};
+
 class cmGradleListValue : public cmGradleValue {
 public:
   cmGradleListValue(const std::vector<cmGradleValue *> &values =

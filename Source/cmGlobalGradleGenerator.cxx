@@ -347,20 +347,74 @@ bool cmGlobalGradleGenerator::HaveNativeSourceFiles(cmMakefile *mk) const {
   return false;
 }
 
+cmGlobalGradleGenerator::ConfigType
+cmGlobalGradleGenerator::DetectConfigType(cmLocalGenerator *root,
+                                          const std::string &configName) {
+  auto mk = root->GetMakefile();
+  {
+    std::string uppercase_config_name = cmSystemTools::UpperCase(configName);
+    // read from def
+    const char *res = mk->GetDefinition(uppercase_config_name + "_CONFIG_TYPE");
+    if (res != NULL) {
+      std::string lowercase_res = cmSystemTools::LowerCase(res);
+      if (lowercase_res == "debug")
+        return ConfigType::DEBUG;
+      else if (lowercase_res == "release")
+        return ConfigType::RELESE;
+    }
+  }
+  {
+    // unknown type, try to detect
+    std::string lower_config_name = cmSystemTools::LowerCase(configName);
+    if (lower_config_name.find("debug") != std::string::npos) {
+      return ConfigType::DEBUG;
+    } else if (lower_config_name.find("release") != std::string::npos) {
+      return ConfigType::RELESE;
+    } else {
+      // maybe warning?
+      return ConfigType::RELESE;
+    }
+  }
+}
+
 void cmGlobalGradleGenerator::FillBuildTypesBlock(
     cmLocalGenerator *root, cmGradleBlock *buildTypesBlock) {
   auto mk = root->GetMakefile();
   std::vector<std::string> configs;
   cmSystemTools::ExpandListArgument(mk->GetRequiredDefinition(CONFIG_TYPES),
                                     configs);
+  bool IsMinifyEnabled = cmSystemTools::IsOn(
+      GetOptionalDefinition(mk, "GRADLE_ANDROID_MINIFY_ENABLED", "ON").c_str());
   for (const auto &config : configs) {
     cmsys::auto_ptr<cmGradleBlock> configBlock(new cmGradleBlock(config));
-    std::string configsFlags = GetOptionalDefinition(
-        mk, "JNI_FLAGS_" + cmSystemTools::UpperCase(config), "");
-    if (!configsFlags.empty()) {
-      JNIFlagsSettings settings;
-      configBlock->AppendChild(CreateFlagsFunctionCall(configsFlags, settings));
+    std::string uppercaseConfig = cmSystemTools::UpperCase(config);
+    {
+      // flag support per config
+      std::string configsFlags =
+          GetOptionalDefinition(mk, "JNI_FLAGS_" + uppercaseConfig, "");
+      if (!configsFlags.empty()) {
+        JNIFlagsSettings settings;
+        configBlock->AppendChild(
+            CreateFlagsFunctionCall(configsFlags, settings));
+      }
     }
+    if (IsMinifyEnabled) {
+      bool config_minify_enabled = false;
+      // minify support
+      const char *minify =
+          mk->GetDefinition(uppercaseConfig + "_MINIFY_ENABLED");
+      if (minify != NULL) {
+        // minify is set
+        config_minify_enabled = cmSystemTools::IsOn(minify);
+      } else {
+        // try detect
+        ConfigType detectedType = DetectConfigType(root, config);
+        config_minify_enabled = detectedType == ConfigType::RELESE;
+      }
+      configBlock->AppendChild(new cmGradleSetSetting(
+          "minifyEnabled", new cmGradleBoolValue(config_minify_enabled)));
+    }
+    // TODO(zsessigkacso): implement propguard support
     buildTypesBlock->AppendChild(configBlock.release());
   }
 }

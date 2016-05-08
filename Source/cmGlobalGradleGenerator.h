@@ -119,6 +119,11 @@ private:
     JNIFlagsSettings();
   };
 
+  enum class ConfigType { DEBUG, RELESE, UNKNOWN };
+
+  ConfigType DetectConfigType(cmLocalGenerator *root,
+                              const std::string &configName);
+
   cmGradleFunctionCall *CreateFlagsFunctionCall(
       const std::string &flagsStr,
       const JNIFlagsSettings &settings = JNIFlagsSettings());
