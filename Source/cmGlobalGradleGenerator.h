@@ -113,6 +113,16 @@ private:
   void WriteBuildGradle(std::ostream &fout, cmLocalGenerator *root,
                         std::vector<cmLocalGenerator *> &generators);
 
+  struct JNIFlagsSettings {
+    std::vector<std::string> AdditionalFlags;
+    std::string FunctionName;
+    JNIFlagsSettings();
+  };
+
+  cmGradleFunctionCall *CreateFlagsFunctionCall(
+      const std::string &flagsStr,
+      const JNIFlagsSettings &settings = JNIFlagsSettings());
+
   void FillModelBlock(cmLocalGenerator *root, cmGradleBlock *modelBlock);
 
   void FillAndroidBlock(cmLocalGenerator *root, cmGradleBlock *androidBlock);
@@ -121,8 +131,12 @@ private:
                               cmGradleBlock *defaultConfigBlock);
 
   void FillNDKBlock(cmLocalGenerator *root, cmGradleBlock *ndkBlock);
-    
-   static void SplitBySpaces(const std::string& str, std::vector<std::string>& res);
+
+  void FillBuildTypesBlock(cmLocalGenerator *root,
+                           cmGradleBlock *buildTypesBlock);
+
+  static void SplitBySpaces(const std::string &str,
+                            std::vector<std::string> &res);
 
   enum class SourceFileType { UNKOWN, JAVA, CPP };
 

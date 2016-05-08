@@ -19,6 +19,10 @@
 #include "cmSourceFile.h"
 #include "cmSystemTools.h"
 
+namespace {
+const char *CONFIG_TYPES = "CMAKE_CONFIGURATION_TYPES";
+};
+
 class cmGlobalGradleGenerator::Factory : public cmGlobalGeneratorFactory {
 public:
   virtual cmGlobalGenerator *CreateGlobalGenerator(const std::string &name,
@@ -76,7 +80,7 @@ std::string cmGlobalGradleGenerator::GetGradleBuildCommand() const {
 //----------------------------------------------------------------------------
 void cmGlobalGradleGenerator::EnableLanguage(
     std::vector<std::string> const &lang, cmMakefile *mf, bool optional) {
-  if (!mf->GetDefinition("CMAKE_CONFIGURATION_TYPES")) {
+  if (!mf->GetDefinition(CONFIG_TYPES)) {
     mf->AddCacheDefinition(
         "CMAKE_CONFIGURATION_TYPES", "Debug;Release;MinSizeRel;RelWithDebInfo",
         "Semicolon separated list of supported configuration types, "
@@ -275,6 +279,26 @@ void cmGlobalGradleGenerator::SplitBySpaces(const std::string &str,
   }
 }
 
+cmGlobalGradleGenerator::JNIFlagsSettings::JNIFlagsSettings()
+    : FunctionName("CFlags.addAll") {}
+
+cmGradleFunctionCall *cmGlobalGradleGenerator::CreateFlagsFunctionCall(
+    const std::string &flagsStr, const JNIFlagsSettings &settings) {
+
+  std::vector<std::string> flags;
+  SplitBySpaces(flagsStr, flags);
+  cmsys::auto_ptr<cmGradleListValue> jniFlagsList(new cmGradleListValue);
+  // add additional flags
+  flags.insert(flags.end(), settings.AdditionalFlags.begin(),
+               settings.AdditionalFlags.end());
+  for (const auto &flag : flags) {
+    jniFlagsList->AppendArgument(
+        new cmGradleSimpleValue(flag, cmGradleSimpleValue::Apostrope::SIMPLE));
+  }
+  return new cmGradleFunctionCall(settings.FunctionName,
+                                  jniFlagsList.release());
+}
+
 void cmGlobalGradleGenerator::FillNDKBlock(cmLocalGenerator *root,
                                            cmGradleBlock *ndkBlock) {
   auto mk = root->GetMakefile();
@@ -294,20 +318,16 @@ void cmGlobalGradleGenerator::FillNDKBlock(cmLocalGenerator *root,
       new cmGradleSimpleValue(
           mk->GetRequiredDefinition("GRADLE_ANDROID_NDK_TOOLCHAIN"),
           cmGradleSimpleValue::Apostrope::SIMPLE)));
-  {
-    std::string jni_flags = GetOptionalDefinition(mk, "JNI_FLAGS", "");
-    std::vector<std::string> flags;
-    SplitBySpaces(jni_flags, flags);
-    {
-      cmsys::auto_ptr<cmGradleListValue> jniFlagsList(new cmGradleListValue);
-      for (const auto &flag : flags) {
-        jniFlagsList->AppendArgument(new cmGradleSimpleValue(
-            flag, cmGradleSimpleValue::Apostrope::SIMPLE));
-      }
-      ndkBlock->AppendChild(
-          new cmGradleFunctionCall("CFlags.addAll", jniFlagsList.release()));
-    }
+
+  JNIFlagsSettings settings;
+  std::vector<std::string> includeDirs;
+  // TODO(zsessigkacso): do it properly
+  root->GetIncludeDirectories(includeDirs, root->GetGeneratorTargets()[0]);
+  for (const auto &includeDir : includeDirs) {
+    settings.AdditionalFlags.push_back("-I" + includeDir);
   }
+  ndkBlock->AppendChild(CreateFlagsFunctionCall(
+      GetOptionalDefinition(mk, "JNI_FLAGS", ""), settings));
 }
 
 cmGlobalGradleGenerator::SourceFileType
@@ -325,6 +345,24 @@ bool cmGlobalGradleGenerator::HaveNativeSourceFiles(cmMakefile *mk) const {
       return true;
   }
   return false;
+}
+
+void cmGlobalGradleGenerator::FillBuildTypesBlock(
+    cmLocalGenerator *root, cmGradleBlock *buildTypesBlock) {
+  auto mk = root->GetMakefile();
+  std::vector<std::string> configs;
+  cmSystemTools::ExpandListArgument(mk->GetRequiredDefinition(CONFIG_TYPES),
+                                    configs);
+  for (const auto &config : configs) {
+    cmsys::auto_ptr<cmGradleBlock> configBlock(new cmGradleBlock(config));
+    std::string configsFlags = GetOptionalDefinition(
+        mk, "JNI_FLAGS_" + cmSystemTools::UpperCase(config), "");
+    if (!configsFlags.empty()) {
+      JNIFlagsSettings settings;
+      configBlock->AppendChild(CreateFlagsFunctionCall(configsFlags, settings));
+    }
+    buildTypesBlock->AppendChild(configBlock.release());
+  }
 }
 
 void cmGlobalGradleGenerator::FillAndroidBlock(cmLocalGenerator *root,
@@ -352,6 +390,12 @@ void cmGlobalGradleGenerator::FillAndroidBlock(cmLocalGenerator *root,
     cmsys::auto_ptr<cmGradleBlock> ndkBlock(new cmGradleBlock("ndk"));
     FillNDKBlock(root, ndkBlock.get());
     androidBlock->AppendChild(ndkBlock.release());
+  }
+  {
+    cmsys::auto_ptr<cmGradleBlock> buildTypesBlock(
+        new cmGradleBlock("buildTypes"));
+    FillBuildTypesBlock(root, buildTypesBlock.get());
+    androidBlock->AppendChild(buildTypesBlock.release());
   }
 }
 
