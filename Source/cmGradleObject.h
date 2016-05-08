@@ -70,14 +70,21 @@ protected:
 
 class cmGradleSimpleSetting : public cmGradleSetting {
 public:
+  enum class Equality { USE, DO_NOT_USE };
+  enum class Apostrope { SIMPLE, DO_NOT_USE };
   cmGradleSimpleSetting(const std::string &name, const std::string &value,
-                        bool use_equality_sign = true);
+                        Equality equality = Equality::USE,
+                        Apostrope apostrope = Apostrope::DO_NOT_USE);
   virtual void Write(std::ostream &fout,
                      cmGradleCurrentState &state) const override;
 
+  const char *GetEquality() const;
+  const char *GetApostrophe() const;
+
 private:
   std::string SettingValue;
-  bool UseEqualitySign;
+  Equality UseEqualitySign;
+  Apostrope UseApostrophes;
 };
 
 #endif // cmGradleObject_h

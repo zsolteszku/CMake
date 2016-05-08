@@ -113,6 +113,21 @@ private:
   void WriteBuildGradle(std::ostream &fout, cmLocalGenerator *root,
                         std::vector<cmLocalGenerator *> &generators);
 
+  void FillModelBlock(cmLocalGenerator *root, cmGradleBlock *modelBlock);
+
+  void FillAndroidBlock(cmLocalGenerator *root, cmGradleBlock *androidBlock);
+
+  void FillDefaultConfigBlock(cmLocalGenerator *root,
+                              cmGradleBlock *defaultConfigBlock);
+
+  void FillNDKBlock(cmLocalGenerator *root, cmGradleBlock *ndkBlock);
+
+  enum class SourceFileType { UNKOWN, JAVA, CPP };
+
+  SourceFileType GetSourceFileType(cmSourceFile *src) const;
+
+  bool HaveNativeSourceFiles(cmMakefile *mk) const;
+
 private:
   class Factory;
 

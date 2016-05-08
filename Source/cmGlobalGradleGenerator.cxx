@@ -16,6 +16,7 @@
 #include "cmLocalGenerator.h"
 #include "cmLocalGradleGenerator.h"
 #include "cmMakefile.h"
+#include "cmSourceFile.h"
 #include "cmSystemTools.h"
 
 class cmGlobalGradleGenerator::Factory : public cmGlobalGeneratorFactory {
@@ -236,6 +237,91 @@ std::string cmGlobalGradleGenerator::GetOptionalDefinition(
   return what;
 }
 
+void cmGlobalGradleGenerator::FillDefaultConfigBlock(
+    cmLocalGenerator *root, cmGradleBlock *defaultConfigBlock) {
+  auto mk = root->GetMakefile();
+  defaultConfigBlock->AppendChild(new cmGradleSimpleSetting(
+      "applicationId",
+      mk->GetRequiredDefinition("GRADLE_ANDROID_APPLICATION_ID"),
+      cmGradleSimpleSetting::Equality::USE,
+      cmGradleSimpleSetting::Apostrope::SIMPLE));
+
+  defaultConfigBlock->AppendChild(new cmGradleSimpleSetting(
+      "minSdkVersion.apiLevel",
+      GetOptionalDefinition(mk, "GRADLE_ANDROID_MIN_SDK_API_LEVEL", "4")));
+
+  defaultConfigBlock->AppendChild(new cmGradleSimpleSetting(
+      "targetSdkVersion.apiLevel",
+      GetOptionalDefinition(mk, "GRADLE_ANDROID_TARGET_SDK_API_LEVEL", "23")));
+}
+
+void cmGlobalGradleGenerator::FillNDKBlock(cmLocalGenerator *root,
+                                           cmGradleBlock *ndkBlock) {
+  auto mk = root->GetMakefile();
+  ndkBlock->AppendChild(new cmGradleSimpleSetting(
+      "platformVersion",
+      GetOptionalDefinition(mk, "GRADLE_ANDROID_NDK_VERSION", "9")));
+
+  ndkBlock->AppendChild(new cmGradleSimpleSetting(
+      "moduleName", GetOptionalDefinition(mk, "GRADLE_ANDROID_JNI_MODULE_NAME",
+                                          root->GetProjectName() + "-jni")));
+
+  ndkBlock->AppendChild(new cmGradleSimpleSetting(
+      "toolchain", mk->GetRequiredDefinition("GRADLE_ANDROID_NDK_TOOLCHAIN"),
+      cmGradleSimpleSetting::Equality::USE,
+      cmGradleSimpleSetting::Apostrope::SIMPLE));
+}
+
+cmGlobalGradleGenerator::SourceFileType
+cmGlobalGradleGenerator::GetSourceFileType(cmSourceFile *sourceFile) const {
+  if (sourceFile->GetLanguage() == "C" || sourceFile->GetLanguage() == "CXX")
+    return SourceFileType::CPP;
+  if (sourceFile->GetExtension() == "java")
+    return SourceFileType::JAVA;
+  return SourceFileType::UNKOWN;
+}
+
+bool cmGlobalGradleGenerator::HaveNativeSourceFiles(cmMakefile *mk) const {
+  for (const auto &sourceFile : mk->GetSourceFiles()) {
+    if (GetSourceFileType(sourceFile) == SourceFileType::CPP)
+      return true;
+  }
+  return false;
+}
+
+void cmGlobalGradleGenerator::FillAndroidBlock(cmLocalGenerator *root,
+                                               cmGradleBlock *androidBlock) {
+  auto mk = root->GetMakefile();
+  androidBlock->AppendChild(new cmGradleSimpleSetting(
+      "compileSdkVersion",
+      GetOptionalDefinition(mk, "GRADLE_ANDROID_COMPILE_SDK_VERSION", "23")));
+  androidBlock->AppendChild(new cmGradleSimpleSetting(
+      "buildToolsVersion",
+      GetOptionalDefinition(mk, "GRADLE_ANDROID_BUILD_TOOLS_VERSION", "23.0.2"),
+      cmGradleSimpleSetting::Equality::USE,
+      cmGradleSimpleSetting::Apostrope::SIMPLE));
+
+  {
+    cmsys::auto_ptr<cmGradleBlock> defaultConfigBlock(
+        new cmGradleBlock("defaultConfig"));
+    FillDefaultConfigBlock(root, defaultConfigBlock.get());
+    androidBlock->AppendChild(defaultConfigBlock.release());
+  }
+
+  if (HaveNativeSourceFiles(mk)) {
+    cmsys::auto_ptr<cmGradleBlock> ndkBlock(new cmGradleBlock("ndk"));
+    FillNDKBlock(root, ndkBlock.get());
+    androidBlock->AppendChild(ndkBlock.release());
+  }
+}
+
+void cmGlobalGradleGenerator::FillModelBlock(cmLocalGenerator *root,
+                                             cmGradleBlock *modelBlock) {
+  cmsys::auto_ptr<cmGradleBlock> androidBlock(new cmGradleBlock("android"));
+  FillAndroidBlock(root, androidBlock.get());
+  modelBlock->AppendChild(androidBlock.release());
+}
+
 bool cmGlobalGradleGenerator::CreateGradleObjects(
     cmLocalGenerator *root, std::vector<cmLocalGenerator *> &generators) {
   // apply plugins
@@ -253,22 +339,7 @@ bool cmGlobalGradleGenerator::CreateGradleObjects(
   {
     cmsys::auto_ptr<cmGradleBlock> modelBlock(new cmGradleBlock(
         GetOptionalDefinition(mk, "GRADLE_MODEL_NAME", "model")));
-    {
-      cmsys::auto_ptr<cmGradleBlock> innerModelBlock(new cmGradleBlock(
-          GetOptionalDefinition(mk, "GRADLE_INNER_MODEL_NAME", "android")));
-      {
-
-        innerModelBlock->AppendChild(new cmGradleSimpleSetting(
-            "compileSdkVersion",
-            GetOptionalDefinition(mk, "GRADLE_ANDROID_COMPILE_SDK_VERSION",
-                                  "23")));
-        innerModelBlock->AppendChild(new cmGradleSimpleSetting(
-            "buildToolsVersion",
-            GetOptionalDefinition(mk, "GRADLE_ANDROID_BUILD_TOOLS_VERSION",
-                                  "23.0.2")));
-      }
-      modelBlock->AppendChild(innerModelBlock.release());
-    }
+    FillModelBlock(root, modelBlock.get());
     Objects.push_back(modelBlock.release());
   }
 

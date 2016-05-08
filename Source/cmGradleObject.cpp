@@ -56,13 +56,22 @@ cmGradleSetting::cmGradleSetting(const std::string &name) : SettingName(name) {}
 
 cmGradleSimpleSetting::cmGradleSimpleSetting(const std::string &name,
                                              const std::string &value,
-                                             bool use_equality_sign)
-    : cmGradleSetting(name), SettingValue(value),
-      UseEqualitySign(use_equality_sign) {}
+                                             Equality equality,
+                                             Apostrope apostrope)
+    : cmGradleSetting(name), SettingValue(value), UseEqualitySign(equality),
+      UseApostrophes(apostrope) {}
+
+const char *cmGradleSimpleSetting::GetEquality() const {
+  return (UseEqualitySign == Equality::USE ? " = " : " ");
+}
+
+const char *cmGradleSimpleSetting::GetApostrophe() const {
+  return (UseApostrophes == Apostrope::SIMPLE ? "'" : "");
+}
 
 void cmGradleSimpleSetting::Write(std::ostream &fout,
                                   cmGradleCurrentState &state) const {
   Indent(fout, state);
-  fout << SettingName << (UseEqualitySign ? " = " : " ") << SettingValue
-       << std::endl;
+  fout << SettingName << GetEquality() << GetApostrophe() << SettingValue
+       << GetApostrophe() << std::endl;
 }
