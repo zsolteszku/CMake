@@ -13,6 +13,9 @@
 #define cmGlobalGradleGenerator_h
 
 #include "cmGlobalGenerator.h"
+#include "cmGradleObject.h"
+
+#include <cmsys/auto_ptr.hxx>
 
 class cmGlobalGeneratorFactory;
 class cmSourceFile;
@@ -26,7 +29,7 @@ class cmGlobalGradleGenerator : public cmGlobalGenerator {
 public:
   cmGlobalGradleGenerator(cmake *cm);
 
-  virtual ~cmGlobalGradleGenerator() {}
+  virtual ~cmGlobalGradleGenerator();
   static cmGlobalGeneratorFactory *NewFactory();
 
   ///! Get the name for the generator.
@@ -92,6 +95,10 @@ protected:
 private:
   std::string GetGradleBuildCommand() const;
 
+  static std::string GetOptionalDefinition(cmMakefile *mk,
+                                           const std::string &name,
+                                           const std::string &defaultValue);
+
   void SetGenerationRoot(cmLocalGenerator *root);
 
   void AddExtraTargets(cmLocalGenerator *root,
@@ -108,6 +115,8 @@ private:
 
 private:
   class Factory;
+
+  std::vector<cmGradleObject *> Objects;
 };
 
 #endif // cmGlobalGradleGenerator_h

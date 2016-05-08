@@ -275,6 +275,8 @@ set(SRCS
   cmGlobalGradleGenerator.cxx
   cmLocalGradleGenerator.h
   cmLocalGradleGenerator.cxx
+  cmGradleObject.h
+  cmGradleObject.cxx
   cmGraphAdjacencyList.h
   cmGraphVizWriter.cxx
   cmGraphVizWriter.h

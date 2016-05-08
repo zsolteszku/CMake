@@ -36,7 +36,9 @@ public:
 
 //----------------------------------------------------------------------------
 cmGlobalGradleGenerator::cmGlobalGradleGenerator(cmake *cm)
-    : cmGlobalGenerator(cm) {}
+    : cmGlobalGenerator(cm) {
+  // cm->GetState()->AddCommand(NULL);
+}
 
 void cmGlobalGradleGenerator::GetDocumentation(cmDocumentationEntry &entry) {
   entry.Name = cmGlobalGradleGenerator::GetActualName();
@@ -226,16 +228,71 @@ void cmGlobalGradleGenerator::OutputGradleProject(
       root->GetBinaryDirectory());
 }
 
+std::string cmGlobalGradleGenerator::GetOptionalDefinition(
+    cmMakefile *mk, const std::string &name, const std::string &defaultValue) {
+  const char *what = mk->GetDefinition(name);
+  if (what == NULL)
+    return defaultValue;
+  return what;
+}
+
 bool cmGlobalGradleGenerator::CreateGradleObjects(
     cmLocalGenerator *root, std::vector<cmLocalGenerator *> &generators) {
-  // TODO(zsessigkacso): implement
-  int wtf = 1;
-  wtf++;
+  // apply plugins
+  cmMakefile *mk = root->GetMakefile();
+  const char *pluginsStr = mk->GetDefinition("GRADLE_PLUGINS");
+  if (pluginsStr != NULL) {
+    std::vector<std::string> plugins;
+    cmSystemTools::ExpandListArgument(pluginsStr, plugins);
+    for (const auto &plugin : plugins) {
+      Objects.push_back(new cmGradlePlugin(plugin));
+    }
+  }
+
+  // create model
+  {
+    cmsys::auto_ptr<cmGradleBlock> modelBlock(new cmGradleBlock(
+        GetOptionalDefinition(mk, "GRADLE_MODEL_NAME", "model")));
+    {
+      cmsys::auto_ptr<cmGradleBlock> innerModelBlock(new cmGradleBlock(
+          GetOptionalDefinition(mk, "GRADLE_INNER_MODEL_NAME", "android")));
+      {
+
+        innerModelBlock->AppendChild(new cmGradleSimpleSetting(
+            "compileSdkVersion",
+            GetOptionalDefinition(mk, "GRADLE_ANDROID_COMPILE_SDK_VERSION",
+                                  "23")));
+        innerModelBlock->AppendChild(new cmGradleSimpleSetting(
+            "buildToolsVersion",
+            GetOptionalDefinition(mk, "GRADLE_ANDROID_BUILD_TOOLS_VERSION",
+                                  "23.0.2")));
+      }
+      modelBlock->AppendChild(innerModelBlock.release());
+    }
+    Objects.push_back(modelBlock.release());
+  }
+
   return true;
 }
 
 void cmGlobalGradleGenerator::WriteBuildGradle(
     std::ostream &fout, cmLocalGenerator *root,
     std::vector<cmLocalGenerator *> &generators) {
-  fout << "test";
+  cmGradleCurrentState state;
+  cmGradleObject::Type prevType = cmGradleObject::Type::PLUGIN;
+  for (const auto &object : Objects) {
+    cmGradleObject::Type currType = object->GetType();
+    if (currType != prevType) {
+      fout << std::endl;
+      prevType = currType;
+    }
+    object->Write(fout, state);
+  }
+}
+
+cmGlobalGradleGenerator::~cmGlobalGradleGenerator() {
+  for (const auto &obj : Objects) {
+    delete obj;
+  }
+  Objects.clear();
 }
