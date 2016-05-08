@@ -84,7 +84,7 @@ void cmGlobalGradleGenerator::EnableLanguage(
     std::vector<std::string> const &lang, cmMakefile *mf, bool optional) {
   if (!mf->GetDefinition(CONFIG_TYPES)) {
     mf->AddCacheDefinition(
-        "CMAKE_CONFIGURATION_TYPES", "Debug;Release;MinSizeRel;RelWithDebInfo",
+        "CMAKE_CONFIGURATION_TYPES", "debug;release",
         "Semicolon separated list of supported configuration types, "
         "only supports Debug, Release, MinSizeRel, and RelWithDebInfo, "
         "anything else will be ignored.",
@@ -101,7 +101,8 @@ void cmGlobalGradleGenerator::GenerateBuildCommand(
     const std::string &targetName, const std::string &config, bool fast,
     bool verbose, std::vector<std::string> const &makeOptions) {
   // TODO(zsessigkacso): implement
-  makeCommand.insert(makeCommand.end(), makeOptions.begin(), makeOptions.end());
+  // makeCommand.insert(makeCommand.end(), makeOptions.begin(),
+  // makeOptions.end());
 }
 
 void cmGlobalGradleGenerator::AppendDirectoryForConfig(
@@ -214,9 +215,29 @@ void cmGlobalGradleGenerator::OutputGradleProject(
   if (!this->CreateGradleObjects(root, generators)) {
     return;
   }
-  std::string gradleDir = root->GetCurrentBinaryDirectory();
-  gradleDir += "/gradle/wrapper";
-  cmSystemTools::MakeDirectory(gradleDir.c_str());
+  auto mk = root->GetMakefile();
+  {
+    std::string gradleDir = root->GetCurrentBinaryDirectory();
+    gradleDir += "/gradle";
+    cmSystemTools::MakeDirectory(gradleDir.c_str());
+    std::string wrapperDir =
+        mk->GetRequiredDefinition("GRADLE_WRAPPER_DIRECTORY");
+    if (!cmsys::SystemTools::FileIsFullPath(wrapperDir)) {
+      wrapperDir = cmsys::SystemTools::CollapseFullPath(
+          wrapperDir, root->GetCurrentSourceDirectory());
+    }
+    cmSystemTools::CopyADirectory(wrapperDir, gradleDir + "/wrapper");
+  }
+  {
+    std::string manifest = mk->GetRequiredDefinition("GRADLE_ANDROID_MANIFEST");
+    if (!cmsys::SystemTools::FileIsFullPath(manifest)) {
+      manifest = cmsys::SystemTools::CollapseFullPath(
+          manifest, root->GetCurrentSourceDirectory());
+    }
+    cmSystemTools::CopyAFile(
+        manifest, std::string(root->GetCurrentBinaryDirectory()) +
+                      "/src/main/" + cmSystemTools::GetFilenameName(manifest));
+  }
 
   std::string gradleFile = root->GetCurrentBinaryDirectory();
   gradleFile += "/build.gradle";
