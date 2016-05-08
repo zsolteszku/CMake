@@ -105,6 +105,16 @@ void cmGradleListValue::Write(std::ostream &fout,
   fout << "]";
 }
 
+cmGradleListValue *cmGradleListValue::CreateFromSimples(
+    const std::vector<std::string> &values,
+    cmGradleSimpleValue::Apostrope apostrophe) {
+  cmsys::auto_ptr<cmGradleListValue> listValues(new cmGradleListValue);
+  for (const auto &value : values) {
+    listValues->AppendArgument(new cmGradleSimpleValue(value, apostrophe));
+  }
+  return listValues.release();
+}
+
 cmGradleFunctionCall::cmGradleFunctionCall(const std::string &func_name,
                                            cmGradleValue *arg)
     : FunctionName(func_name), Argument(arg) {}

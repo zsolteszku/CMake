@@ -114,6 +114,11 @@ public:
 
   void AppendArgument(cmGradleValue *argument);
 
+  static cmGradleListValue *
+  CreateFromSimples(const std::vector<std::string> &values,
+                    cmGradleSimpleValue::Apostrope apostrophe =
+                        cmGradleSimpleValue::Apostrope::NONE);
+
 private:
   std::vector<cmGradleValue *> Values;
 };

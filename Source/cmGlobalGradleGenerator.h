@@ -143,6 +143,13 @@ private:
   void FillProductFlavorsBlock(cmLocalGenerator *root,
                                cmGradleBlock *productFlavorsBlock);
 
+  void FillAndroidSourcesBlock(cmLocalGenerator *root,
+                               cmGradleBlock *androidSourcesBlock);
+
+  void FillSourceDir(cmLocalGenerator *root, cmGradleBlock *mainBlock,
+                     const std::string &group,
+                     bool useGlobalIncludeDirs = false);
+
   static void SplitBySpaces(const std::string &str,
                             std::vector<std::string> &res);
 

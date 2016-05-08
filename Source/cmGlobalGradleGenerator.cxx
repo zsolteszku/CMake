@@ -19,6 +19,8 @@
 #include "cmSourceFile.h"
 #include "cmSystemTools.h"
 
+#include <cmsys/SystemTools.hxx>
+
 namespace {
 const char *CONFIG_TYPES = "CMAKE_CONFIGURATION_TYPES";
 };
@@ -287,16 +289,13 @@ cmGradleFunctionCall *cmGlobalGradleGenerator::CreateFlagsFunctionCall(
 
   std::vector<std::string> flags;
   SplitBySpaces(flagsStr, flags);
-  cmsys::auto_ptr<cmGradleListValue> jniFlagsList(new cmGradleListValue);
   // add additional flags
   flags.insert(flags.end(), settings.AdditionalFlags.begin(),
                settings.AdditionalFlags.end());
-  for (const auto &flag : flags) {
-    jniFlagsList->AppendArgument(
-        new cmGradleSimpleValue(flag, cmGradleSimpleValue::Apostrope::SIMPLE));
-  }
-  return new cmGradleFunctionCall(settings.FunctionName,
-                                  jniFlagsList.release());
+  return new cmGradleFunctionCall(
+      settings.FunctionName,
+      cmGradleListValue::CreateFromSimples(
+          flags, cmGradleSimpleValue::Apostrope::SIMPLE));
 }
 
 void cmGlobalGradleGenerator::FillNDKBlock(cmLocalGenerator *root,
@@ -546,11 +545,64 @@ void cmGlobalGradleGenerator::FillAndroidBlock(cmLocalGenerator *root,
   }
 }
 
+void cmGlobalGradleGenerator::FillSourceDir(cmLocalGenerator *root,
+                                            cmGradleBlock *mainBlock,
+                                            const std::string &group,
+                                            bool useGlobalIncludeDirs) {
+  auto mk = root->GetMakefile();
+  std::vector<std::string> include_dirs;
+  if (useGlobalIncludeDirs) {
+    // TODO(zsessigkacso): do it properly
+    root->GetIncludeDirectories(include_dirs, root->GetGeneratorTargets()[0]);
+  } else {
+    std::string group_uppercase = cmSystemTools::UpperCase(group);
+    const char *res = mk->GetRequiredDefinition("GRADLE_" + group_uppercase +
+                                                "_INCLUDE_DIRECTORIES");
+    cmSystemTools::ExpandListArgument(res, include_dirs);
+  }
+  for (auto &include_dir : include_dirs) {
+    if (!cmsys::SystemTools::FileIsFullPath(include_dir)) {
+      include_dir = cmsys::SystemTools::CollapseFullPath(
+          include_dir, root->GetSourceDirectory());
+    }
+  }
+  if (!include_dirs.empty()) {
+    cmsys::auto_ptr<cmGradleBlock> groupBlock(new cmGradleBlock(group));
+    {
+      cmsys::auto_ptr<cmGradleBlock> sourceBlock(new cmGradleBlock("source"));
+      sourceBlock->AppendChild(new cmGradleSetSetting(
+          "srcDirs",
+          cmGradleListValue::CreateFromSimples(
+              include_dirs, cmGradleSimpleValue::Apostrope::SIMPLE)));
+      groupBlock->AppendChild(sourceBlock.release());
+    }
+    mainBlock->AppendChild(groupBlock.release());
+  }
+}
+
+void cmGlobalGradleGenerator::FillAndroidSourcesBlock(
+    cmLocalGenerator *root, cmGradleBlock *androidSourcesBlock) {
+  cmsys::auto_ptr<cmGradleBlock> mainBlock(new cmGradleBlock("main"));
+  FillSourceDir(root, mainBlock.get(), "java");
+  FillSourceDir(root, mainBlock.get(), "jni", true);
+  FillSourceDir(root, mainBlock.get(), "res");
+  androidSourcesBlock->AppendChild(mainBlock.release());
+}
+
 void cmGlobalGradleGenerator::FillModelBlock(cmLocalGenerator *root,
                                              cmGradleBlock *modelBlock) {
-  cmsys::auto_ptr<cmGradleBlock> androidBlock(new cmGradleBlock("android"));
-  FillAndroidBlock(root, androidBlock.get());
-  modelBlock->AppendChild(androidBlock.release());
+  {
+    cmsys::auto_ptr<cmGradleBlock> androidBlock(new cmGradleBlock("android"));
+    FillAndroidBlock(root, androidBlock.get());
+    modelBlock->AppendChild(androidBlock.release());
+  }
+  // sources
+  {
+    cmsys::auto_ptr<cmGradleBlock> androidSourcesBlock(
+        new cmGradleBlock("android.sources"));
+    FillAndroidSourcesBlock(root, androidSourcesBlock.get());
+    modelBlock->AppendChild(androidSourcesBlock.release());
+  }
 }
 
 bool cmGlobalGradleGenerator::CreateGradleObjects(
