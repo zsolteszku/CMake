@@ -605,6 +605,57 @@ void cmGlobalGradleGenerator::FillModelBlock(cmLocalGenerator *root,
   }
 }
 
+void cmGlobalGradleGenerator::FillRepositoriesBlock(cmLocalGenerator *root,
+                                                    cmGradleBlock *repoBlock) {
+  auto mk = root->GetMakefile();
+  std::vector<std::string> repos;
+  cmSystemTools::ExpandListArgument(
+      GetOptionalDefinition(mk, "GRADLE_REPOSITORIES", "jcenter"), repos);
+  for (const auto &repo : repos) {
+    repoBlock->AppendChild(new cmGradleFunctionCall(repo));
+  }
+}
+
+void cmGlobalGradleGenerator::FillBuildscriptBlock(
+    cmLocalGenerator *root, cmGradleBlock *buildScriptBlock) {
+  auto mk = root->GetMakefile();
+  {
+    // repositories
+    cmsys::auto_ptr<cmGradleBlock> repoBlock(new cmGradleBlock("repositories"));
+    FillRepositoriesBlock(root, repoBlock.get());
+    buildScriptBlock->AppendChild(repoBlock.release());
+  }
+  {
+    // dependencies
+    cmsys::auto_ptr<cmGradleBlock> dependencies(
+        new cmGradleBlock("dependencies"));
+
+    using Dependency = std::pair<std::string, std::string>;
+    std::vector<Dependency> deps;
+    {
+      std::vector<std::string> depList;
+      cmSystemTools::ExpandListArgument(
+          GetOptionalDefinition(
+              mk, "GRADLE_DEPENDENCIES",
+              "classpath;com.android.tools.build:gradle-experimental:0.7.0"),
+          depList);
+      // TODO(zsessigkacso) error handling
+      if (depList.size() % 2 == 0) {
+        for (size_t idx = 0; idx + 1 < depList.size(); idx += 2) {
+          deps.push_back(Dependency(depList[idx], depList[idx + 1]));
+        }
+      }
+    }
+    for (const auto &dep : deps) {
+      dependencies->AppendChild(new cmGradleSetSetting(
+          dep.first, new cmGradleSimpleValue(
+                         dep.second, cmGradleSimpleValue::Apostrope::SIMPLE),
+          cmGradleSetSetting::Equality::DO_NOT_USE));
+    }
+    buildScriptBlock->AppendChild(dependencies.release());
+  }
+}
+
 bool cmGlobalGradleGenerator::CreateGradleObjects(
     cmLocalGenerator *root, std::vector<cmLocalGenerator *> &generators) {
   // apply plugins
@@ -616,6 +667,26 @@ bool cmGlobalGradleGenerator::CreateGradleObjects(
     for (const auto &plugin : plugins) {
       Objects.push_back(new cmGradlePlugin(plugin));
     }
+  }
+  // buildscript
+  {
+    cmsys::auto_ptr<cmGradleBlock> buildScriptBlock(
+        new cmGradleBlock("buildscript"));
+    FillBuildscriptBlock(root, buildScriptBlock.get());
+    Objects.push_back(buildScriptBlock.release());
+  }
+  // allprojects
+  {
+    cmsys::auto_ptr<cmGradleBlock> allProjectsBlock(
+        new cmGradleBlock("allprojects"));
+    {
+      // repositories
+      cmsys::auto_ptr<cmGradleBlock> repoBlock(
+          new cmGradleBlock("repositories"));
+      FillRepositoriesBlock(root, repoBlock.get());
+      allProjectsBlock->AppendChild(repoBlock.release());
+    }
+    Objects.push_back(allProjectsBlock.release());
   }
 
   // create model

@@ -125,7 +125,7 @@ private:
 
 class cmGradleFunctionCall : public cmGradleExpression {
 public:
-  cmGradleFunctionCall(const std::string &func_name, cmGradleValue *arg);
+  cmGradleFunctionCall(const std::string &func_name, cmGradleValue *arg = NULL);
   virtual Type GetType() const override { return Type::FUNCTION_CALL; }
   virtual void Write(std::ostream &fout,
                      cmGradleCurrentState &state) const override;

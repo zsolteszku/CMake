@@ -150,6 +150,11 @@ private:
                      const std::string &group,
                      bool useGlobalIncludeDirs = false);
 
+  void FillBuildscriptBlock(cmLocalGenerator *root,
+                            cmGradleBlock *buildScriptBlock);
+
+  void FillRepositoriesBlock(cmLocalGenerator *root, cmGradleBlock *repoBlock);
+
   static void SplitBySpaces(const std::string &str,
                             std::vector<std::string> &res);
 

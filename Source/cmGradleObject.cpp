@@ -123,7 +123,8 @@ void cmGradleFunctionCall::Write(std::ostream &fout,
                                  cmGradleCurrentState &state) const {
   Indent(fout, state);
   fout << FunctionName << "(";
-  Argument->Write(fout, state);
+  if (Argument.get() != NULL)
+    Argument->Write(fout, state);
   fout << ")" << std::endl;
 }
 
